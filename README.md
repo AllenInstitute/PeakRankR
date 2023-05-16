@@ -20,6 +20,7 @@ Steps to run the script to get a ranked list of peaks in a group for cloning
         Peak_MACS2_rank(test_file, "cell.population", "Trhr")
         
         # Get the intersect ranks for Trhr
+        # To get the intersect rank for a group e.g.Trhr against a background group apply Peak_MACS2_rank on the background groups
         Peak_intersect("Trhr",c("Astrocytes-2","Astrocytes-1","Trhr"))
         test_intersect_df <- read.csv("./peak_intersect_files/Trhr.intersect.tsv.tmp", sep = "\t",header = F)
         test_intersect_result <- Peak_intersect_rank(test_intersect_df)
