@@ -14,7 +14,7 @@ Steps to run the script to get a ranked list of peaks in a group for cloning
 
 1. Install the package from here
 2. Set the working directory containing the bwfiles under ./bwfiles/*.bw
-3. Create directories peak_subset_files, peak_subset_ranks, peak_coverage_files
+3. Create directories peak_subset_files, peak_subset_ranks, peak_intersect_files, peak_intersect_rank, peak_coverage_files
 4. Run the following lines of code:
    
    Note: subclass_annotated_markerPeaks.tsv is available here for reference, We are ranking peaks for "Trhr" (subclass) in the file
