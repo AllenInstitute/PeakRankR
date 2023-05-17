@@ -2,6 +2,10 @@
 
 The package consists of functions to rank enhancer peaks in a group of cells given a tsv file input from CERP pipeline. 
 
+Install:
+
+   Clone this github and build the R package
+
 The workflow is as follows:
 
 COMING SOON ....
