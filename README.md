@@ -4,7 +4,7 @@ The package consists of functions to rank enhancer peaks in a group of cells giv
 
 Install:
 
-   Clone this github and build the R package
+   Clone this github and source the files
 
 The workflow is as follows:
 
