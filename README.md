@@ -12,12 +12,12 @@ Clone this github repo and source the files or
 
 The workflow is as follows:
 
-![workflow]("./workflow.png")
+![workflow]("workflow.png")
 
 ## Pictorial representation on scaling for rank sum
 
 
-![scaling]("./scaling.png")
+![scaling]("scaling.png")
 
 # Run
 
