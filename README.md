@@ -12,12 +12,12 @@ Clone this github repo and source the files or
 
 The workflow is as follows:
 
-![workflow]("https://github.com/AllenInstitute/PeakRankeR/blob/master/workflow.png")
+![workflow](https://github.com/AllenInstitute/PeakRankeR/blob/master/workflow.png)
 
 ## Pictorial representation on scaling for rank sum
 
 
-![scaling]("https://github.com/AllenInstitute/PeakRankeR/blob/master/scaling.png")
+![scaling](https://github.com/AllenInstitute/PeakRankeR/blob/master/scaling.png)
 
 # Run
 
