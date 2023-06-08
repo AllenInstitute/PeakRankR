@@ -4,8 +4,9 @@ The R Package can be used to prioritize a list of enahncers/peaks from different
 
 ## Installation
 
-Clone this github and source the files
+Clone this github repo and source the files or 
 
+--COMING SOON--
 
 ## Workflow
 
@@ -29,12 +30,8 @@ Ranked_peaks_file <- Peak_RankeR(tsv_file,
 				bw_table, 
 				TRUE,
 				c(1,1,1)))
-
-
-
 ```
-
-Replace the "" with the right values
+Replace the string in "" with the right values
        
  
 
