@@ -1,11 +1,9 @@
 #' A Peak_MACS2_rank function 
 #'
-#' This function allows you to extract the peaks for a group by category along with its MACS2 rank from the CERP tsv file and places the output in a new directory called peak_subset_files with two files per group, 
-#' one as is and one sorted using bedtools in two directories 
+#' Add rank to the tsv file based on peak magnitude given by MACS2
 #' 
 #' @param tsv_file_df CERP tsv_file_df REQUIRED
 #' @param group_by_column column name in the tsv_file that has the groups 
-#' @param group unique group in the tsv_file for which the peak rank file needs to be created, for eg. Pvalb
 #' @keywords MACS2
 #' @export
 #' @examples 
@@ -14,36 +12,25 @@
 
 #########################################################################################################################################################
 
-# setwd("/allen/programs/celltypes/workgroups/rnaseqanalysis/sarojaS/230418_PeakRanker_package/PRP/R")
 
-# To do:
-# change the bedtools to granges and don't write out files
-
-#########################################################################################################################################################
-
-
-
-Peak_MACS2_rank <- function(tsv_file_df, group_by_column_name, group){
+Peak_MACS2_rank <- function(tsv_file_df, group_by_column_name){
   
-  print(group)
+  print("Running peak rank...")
+  # to give the string as column name to dplyr
+  group_by_column_name <- sym(group_by_column_name)
   
-  # Check for the column!
-  # change it to to a df explicitly
-  df <- tsv_file_df[tsv_file_df[[group_by_column_name]] == group, c("chr","start","end","rank")]
+  # making sure we work on a df
+  df <- as.data.frame(tsv_file_df)
   
-  # writing peak rank files
-  write.table(df, file = paste0("./peak_subset_files/", group, ".peak.rank.tsv.tmp", collapse = ""), sep = "\t", row.names = F, col.names = F, quote = F)
+  # assign ranks to EVERY group based on magnitude
+  df_final <- df %>%
+    group_by(!!group_by_column_name) %>%
+    mutate(MACS2_rank = as.numeric(as.factor(rank(rank)))) %>%
+      #-peak.magnitude)))) %>%
+    as.data.frame()
   
-  cmd1 <- paste0("bedtools sort -i ./peak_subset_files/", group, ".peak.rank.tsv.tmp > ./peak_subset_ranks/", group, ".peak.rank.tsv", collapse = "")
-  system(cmd1)
+  # Returning the entire table as is with the new column
+  return(df_final)
   
-  # error if no rows (warning/rows function)
 }
  
-#########################################################################################################################################################
-
-# testing the function
-
-# test_file <- read.csv("./../../PeakRankeRPackage/subclass_annotated_markerPeaks.tsv", sep = "\t", header = T)
-# Peak_MACS2_rank(test_file, "cell.population", "Trhr")
-#########################################################################################################################################################
