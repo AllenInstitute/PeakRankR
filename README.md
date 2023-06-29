@@ -1,4 +1,4 @@
-# PeakRankeR
+# PeakRankR
 
 The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates and group (at bare minimum) and two column file (refer test directory for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
 
