@@ -31,7 +31,7 @@ Ranked_peaks_file <- Peak_RankeR(tsv_file,
 				TRUE,
 				c(1,1,1)))
 ```
-Replace the string in "" with the right values
+Replace the string  with the right values
        
  
 
