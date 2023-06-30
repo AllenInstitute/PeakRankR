@@ -1,19 +1,18 @@
 Package: PeakRankR
-Title: What the Package Does (One Line, Title Case)
+Title: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Saroja",
            family = "Somasundaram",
            role = c("aut", "cre"),
-           email = "sarojas@alleninstitute.org",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "sarojas@alleninstitute.org")
+URL: https://github.com/
 Description: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: GPL-3
 Depends: bedtoolsr,
     data.table,
     dplyr,
     rtracklayer
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.1.1
