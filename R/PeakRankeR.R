@@ -76,6 +76,7 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
      
 
     PP_df_norm$rank_sum  <- rowSums(PP_df_norm[c("MACS2_rank","peak_intersect_rank","peak_cov_rank")])
+    PP_df_norm <- as.data.frame(PP_df_norm)
     setDT(PP_df_norm)[order(rank_sum), PeakRankeR_rank := rleid(rank_sum)]
   
     

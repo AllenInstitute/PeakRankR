@@ -7,13 +7,24 @@
 range01(x)
 }
 \arguments{
-\item{rank_df}{data_frame which has the peaks for a specific group and newly added rank columns generated using PeakRankeR package}
+\item{tsv_file_df}{CERP tsv_file_df REQUIRED}
+
+\item{group_by_column}{column name in the tsv_file that has the groups}
+
+\item{background_group}{list of groups from tsv_file with which the group peaks should be intersected}
+
+\item{bw_table}{table of sample name and bigwig files}
+
+\item{rank_sum}{if the rank sum (0 - 1) should be provided in the output}
+
+\item{weights}{vector of the features MACS2, intersect, coverage in that order}
 }
 \description{
-This function calculates the final rank for each peak in tsv file given the columns of *ranks produced using PeakRankeR package
+This function calculates the final rank for group of interest against background group
 }
 \examples{
 Peak_RankeR()
+
 range01()
 
 }
