@@ -4,9 +4,9 @@ The R Package can be used to prioritize a list of enahncers/peaks from different
 
 ## Installation
 
-Clone this github repo and source the files or 
+Clone this github repo or install via: 
 
---COMING SOON--
+install.packages("/allen/programs/celltypes/workgroups/rnaseqanalysis/sarojaS/230418_PeakRanker_package/PeakRankeR_2023-06-08/PeakRankeR/ PeakRankR_0.0.0.9000.tar.gz", repos = NULL) 
 
 ## Workflow
 
