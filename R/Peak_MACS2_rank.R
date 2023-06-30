@@ -25,8 +25,8 @@ Peak_MACS2_rank <- function(tsv_file_df, group_by_column_name){
   # assign ranks to EVERY group based on magnitude
   df_final <- df %>%
     group_by(!!group_by_column_name) %>%
-    mutate(MACS2_rank = as.numeric(as.factor(rank(rank)))) %>%
-      #-peak.magnitude)))) %>%
+    mutate(MACS2_rank = as.numeric(as.factor(rank(-peak.magnitude)))) %>%
+      #rank)))) %>%
     as.data.frame()
   
   # Returning the entire table as is with the new column

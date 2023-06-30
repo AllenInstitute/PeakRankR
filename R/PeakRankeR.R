@@ -24,7 +24,7 @@ range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 # Removing group
 Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_table, rank_sum, weights){
    #print(group)
-   weigths_vector <- weights
+  weights_vector <- weights
   
    # MACS2 rank
    MACS2_df <- Peak_MACS2_rank(tsv_file_df, group_by_column_name)
@@ -63,29 +63,31 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
   
      
     # multiplying weights
-    # sum_of_weights <- sum(weights)
-    # # Divide by sum_of_weights
-    # PP_df_norm$MACS2_rank <- (weigths_vector[1]/sum_of_weights) * PP_df_norm$MACS2_rank
-    # PP_df_norm$peak_intersect_rank <- (weigths_vector[2]/sum_of_weights) * PP_df_norm$peak_intersect_rank
-    # PP_df_norm$peak_cov_rank <- (weigths_vector[3]/sum_of_weights) * PP_df_norm$peak_cov_rank
+     sum_of_weights <- sum(weights)
+     # Divide by sum_of_weights
+     PP_df_norm$MACS2_rank <- (weigths_vector[1]/sum_of_weights) * PP_df_norm$MACS2_rank
+     PP_df_norm$peak_intersect_rank <- (weigths_vector[2]/sum_of_weights) * PP_df_norm$peak_intersect_rank
+     PP_df_norm$peak_cov_rank <- (weigths_vector[3]/sum_of_weights) * PP_df_norm$peak_cov_rank
 
      # multiplying weights
-     PP_df_norm$MACS2_rank <- (weigths_vector[1]) * PP_df_norm$MACS2_rank
-      PP_df_norm$peak_intersect_rank <- (weigths_vector[2]) * PP_df_norm$peak_intersect_rank
-     PP_df_norm$peak_cov_rank <- (weigths_vector[3]) * PP_df_norm$peak_cov_rank
+     #PP_df_norm$MACS2_rank <- (weights_vector[1]) * PP_df_norm$MACS2_rank
+     #PP_df_norm$peak_intersect_rank <- (weights_vector[2]) * PP_df_norm$peak_intersect_rank
+     #PP_df_norm$peak_cov_rank <- (weights_vector[3]) * PP_df_norm$peak_cov_rank
      
 
     PP_df_norm$rank_sum  <- rowSums(PP_df_norm[c("MACS2_rank","peak_intersect_rank","peak_cov_rank")])
     PP_df_norm <- as.data.frame(PP_df_norm)
-    setDT(PP_df_norm)[order(rank_sum), PeakRankeR_rank := rleid(rank_sum)]
-  
     
-    PP_df_norm_df <- as.data.frame(PP_df_norm)
+    PP_df_final <- PP_df_norm %>% 
+      group_by(cell.population) %>%
+      mutate(PeakRankeR_rank = as.numeric(as.factor(frank(rank_sum, ties.method = "min"))))
+   
+    PP_df_final <- as.data.frame(PP_df_final)
     if(rank_sum) {
-      PP_df_norm_sub <- PP_df_norm_df[,!(names(PP_df_norm) %in% c("MACS2_rank","peak_intersect_rank","peak_cov_rank","column_label"))]
+      PP_df_norm_sub <- PP_df_final[,!(names(PP_df_final) %in% c("MACS2_rank","peak_intersect_rank","peak_cov_rank","column_label"))]
       return(PP_df_norm_sub)
     }else{
-      PP_df_norm_sub <- PP_df_norm_df[,!(names(PP_df_norm) %in% c("MACS2_rank","peak_intersect_rank","peak_cov_rank","column_label","rank_sum"))]
+      PP_df_norm_sub <- PP_df_final[,!(names(PP_df_final) %in% c("MACS2_rank","peak_intersect_rank","peak_cov_rank","column_label","rank_sum"))]
       return(PP_df_norm_sub)
      }
 
