@@ -45,7 +45,7 @@
 #'				      data_frame_of_regions,
 #'                                    parallel = FALSE)
 
-multiBigwig_summary <- function(data_table,
+multiBigwig_summary_SS <- function(data_table,
                                 summary_type = "mean",
 				# Added by SS
 				data_frame_of_regions,

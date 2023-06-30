@@ -1,11 +1,11 @@
 #' A Peak_intersect_rank function 
 #'
 #' 
-#' Peak_intersect_rank() ranks for specificity (group peaks with low intersection). 
+#' Peak_intersect_rank() ranks for specificity (peaks of a group having low intersection with other groups). 
 #' 
 #' @param tsv_file_df CERP tsv_file_df REQUIRED
 #' @param group_by_column column name in the tsv_file that has the groups 
-#' @param group unique group in the tsv_file for which the ranked peak intersect file needs to be created
+#' @param group unique group in the tsv_file for that needs to be ranked 
 #' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
 #'
 #' @keywords bedtools intersect

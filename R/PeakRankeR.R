@@ -4,10 +4,9 @@
 #' 
 #' @param tsv_file_df CERP tsv_file_df REQUIRED
 #' @param group_by_column column name in the tsv_file that has the groups 
-#' @param group unique group in the tsv_file for which the ranked peak intersect file needs to be created
 #' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
 #' @param bw_table table of sample name and bigwig files
-#' @param rank_sum if the rank sum should be provided in the output
+#' @param rank_sum if the rank sum (0 - 1) should be provided in the output
 #' @param weights vector of the features MACS2, intersect, coverage in that order
 #' 
 #' @keywords PeakRankeR 
@@ -20,6 +19,7 @@
 
 # rank range
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+
 
 # Removing group
 Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_table, rank_sum, weights){
@@ -57,9 +57,11 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
     # From here
     # Commenting from here for test
      PP_df_norm <- PP_df %>% group_by(cell.population) %>%
-     mutate_at(c("MACS2_rank","peak_intersect_rank","peak_cov_rank"), function(x) range01(x))
-
-   
+     mutate_at(c("MACS2_rank","peak_intersect_rank","peak_cov_rank"), function(x) range01(x)) %>%
+      mutate_all(~ifelse(is.nan(.), 0, .))
+     
+  
+     
     # multiplying weights
     # sum_of_weights <- sum(weights)
     # # Divide by sum_of_weights
