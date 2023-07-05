@@ -24,12 +24,12 @@ The workflow is as follows:
 ```
 tsv_file <- "input peaks file with coordinates and group name columns
 bw_table <- "path to bigwig table"
-Ranked_peaks_file <- Peak_RankeR(tsv_file,
-				"group by column",
-				unique(tsv_file$"group_by_column"),
-				bw_table, 
-				TRUE,
-				c(1,1,1)))
+Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = ArchR_tsv_file,
+				group_by_column_name = "cell.population",
+				background_group     = unique(ArchR_tsv_file$"group_by_column"),
+				bw_table             = example_bw_table, 
+				rank_sum             = TRUE,
+				weights              = c(1,1,1)))
 ```
 Replace the string  with the right values
        
