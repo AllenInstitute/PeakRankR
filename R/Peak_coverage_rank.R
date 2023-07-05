@@ -9,8 +9,6 @@
 #' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
 #' @param bw_table table of sample name and bigwig files
 #' @export
-#' Peak_coverage_rank()
-
 Peak_coverage_rank <- function(tsv_file_df, group_by_column,  group, background_group, bw_table){
   
   print("running peak coverage rank...")
