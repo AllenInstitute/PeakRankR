@@ -1,22 +1,13 @@
 #' A Peak_intersect_rank function 
 #'
-#' 
 #' Peak_intersect_rank() ranks for specificity (peaks of a group having low intersection with other groups). 
 #' 
 #' @param tsv_file_df CERP tsv_file_df REQUIRED
 #' @param group_by_column column name in the tsv_file that has the groups 
 #' @param group unique group in the tsv_file for that needs to be ranked 
 #' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
-#'
-#' @keywords bedtools intersect
 #' @export
-#' @examples 
-#' Peak_intersect_rank()
 
-#########################################################################################################################################################
-
-
-# Function 1
 Peak_intersect_rank <- function(tsv_file_df, group_by_column_name, group, background_group){
   
   print("running peak intersect rank...")
