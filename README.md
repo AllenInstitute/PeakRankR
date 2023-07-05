@@ -31,7 +31,14 @@ Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = ArchR_tsv_file,
 				rank_sum             = TRUE,
 				weights              = c(1,1,1)))
 ```
-Replace the string  with the right values
+
+example_bw_table
+
+bw_path                                    | sample_id
+-------------------------------------------| -------------
+/allen/programs/celltypes/Astrocytes-1.bw  | Astrocytes-1
+
+
        
  
 
