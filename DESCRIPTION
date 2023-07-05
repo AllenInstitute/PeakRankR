@@ -12,8 +12,6 @@ License: GPL-3
 Depends: bedtoolsr,
     data.table,
     dplyr,
-    rtracklayer,
-    tibble,
     tidyr,
     BiocParallel
 Encoding: UTF-8
