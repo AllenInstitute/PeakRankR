@@ -2,7 +2,7 @@
 % Please edit documentation in R/multiBigwig_summary_SS.R
 \name{multiBigwig_summary_SS}
 \alias{multiBigwig_summary_SS}
-\title{Enrichments at genomics regions}
+\title{Enrichments at genomics regions (Adapted from ALPS)}
 \usage{
 multiBigwig_summary_SS(
   data_table,
@@ -34,22 +34,4 @@ enrichments from a set of given bigwig files
 and a set of genomics regions.
 This function is similar to
 \code{deeptools multiBigwigSummary} python package.
-}
-\examples{
-
-## load example data
-
-chr21_data_table <- system.file('extdata/bw', 'ALPS_example_datatable.txt', package = 'ALPS', mustWork = TRUE)
-
-## attach path to bw_path and bed_path
-d_path <- dirname(chr21_data_table)
-
-chr21_data_table <- read.delim(chr21_data_table, header = TRUE)
-chr21_data_table$bw_path <- paste0(d_path, '/', chr21_data_table$bw_path)
-chr21_data_table$bed_path <- paste0(d_path, '/', chr21_data_table$bed_path)
-
-enrichments <- multiBigwig_summary(data_table = chr21_data_table,
-                                   summary_type = 'mean',
-			      data_frame_of_regions,
-                                   parallel = FALSE)
 }

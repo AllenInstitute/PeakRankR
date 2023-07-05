@@ -2,30 +2,13 @@
 % Please edit documentation in R/PeakRankeR.R
 \name{range01}
 \alias{range01}
-\title{A Peak_RankeR function}
+\title{range function}
 \usage{
 range01(x)
 }
 \arguments{
-\item{tsv_file_df}{CERP tsv_file_df REQUIRED}
-
-\item{group_by_column}{column name in the tsv_file that has the groups}
-
-\item{background_group}{list of groups from tsv_file with which the group peaks should be intersected}
-
-\item{bw_table}{table of sample name and bigwig files}
-
-\item{rank_sum}{if the rank sum (0 - 1) should be provided in the output}
-
-\item{weights}{vector of the features MACS2, intersect, coverage in that order}
+\item{x}{vector that needs to be scaled}
 }
 \description{
-This function calculates the final rank for group of interest against background group
+This function scales a vector ranging from 0 - 1
 }
-\examples{
-Peak_RankeR()
-
-range01()
-
-}
-\keyword{PeakRankeR}

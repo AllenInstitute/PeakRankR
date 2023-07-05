@@ -14,8 +14,3 @@ Peak_MACS2_rank(tsv_file_df, group_by_column_name)
 \description{
 Add rank to the tsv file based on peak magnitude given by MACS2
 }
-\examples{
-Peak_MACS2_rank()
-
-}
-\keyword{MACS2}

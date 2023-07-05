@@ -18,8 +18,3 @@ Peak_intersect_rank(tsv_file_df, group_by_column_name, group, background_group)
 \description{
 Peak_intersect_rank() ranks for specificity (peaks of a group having low intersection with other groups).
 }
-\examples{
-Peak_intersect_rank()
-}
-\keyword{bedtools}
-\keyword{intersect}

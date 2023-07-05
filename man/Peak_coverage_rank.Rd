@@ -27,7 +27,3 @@ Peak_coverage_rank(
 Peak_coverage_rank() function ranks (descending) the coverage proportion per peak of a group across groups
 Needs the bigwig files
 }
-\examples{
-Peak_coverage_rank()
-}
-\keyword{multiBigWigSummary}
