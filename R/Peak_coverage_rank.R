@@ -8,16 +8,8 @@
 #' @param group unique group in the tsv_file that needs to be ranked
 #' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
 #' @param bw_table table of sample name and bigwig files
-#' 
-#' @keywords multiBigWigSummary 
 #' @export
-#' @examples 
 #' Peak_coverage_rank()
-
-#########################################################################################################################################################
-
-
-
 
 Peak_coverage_rank <- function(tsv_file_df, group_by_column,  group, background_group, bw_table){
   
