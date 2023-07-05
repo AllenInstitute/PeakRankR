@@ -16,9 +16,6 @@
 #' default is \code{TRUE}
 #' @return data.frame of enrichments within given genomic regions
 #' @export
-#' multiBigwig_summary_SS
-#'
-
 multiBigwig_summary_SS <- function(data_table,
                                 summary_type = "mean",
 				# Added by SS
