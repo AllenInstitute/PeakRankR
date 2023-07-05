@@ -4,14 +4,8 @@
 #' 
 #' @param tsv_file_df CERP tsv_file_df REQUIRED
 #' @param group_by_column column name in the tsv_file that has the groups 
-#' @keywords MACS2
-#' @export
-#' @examples 
+#' @export 
 #' Peak_MACS2_rank()
-#' 
-
-#########################################################################################################################################################
-
 
 Peak_MACS2_rank <- function(tsv_file_df, group_by_column_name){
   
