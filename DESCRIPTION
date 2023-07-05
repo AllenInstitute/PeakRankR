@@ -12,7 +12,9 @@ License: GPL-3
 Depends: bedtoolsr,
     data.table,
     dplyr,
-    rtracklayer
+    rtracklayer,
+    tidyr,
+    tibble
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
