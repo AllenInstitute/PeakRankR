@@ -1,4 +1,4 @@
-#' Enrichments at genomics regions
+#' Enrichments at genomics regions (Adapted from ALPS)
 #'
 #' @description \code{multiBigwig_summary} is a function to calculate
 #' enrichments from a set of given bigwig files
@@ -26,24 +26,6 @@
 #' @return data.frame of enrichments within given genomic regions
 #'
 #' @export
-#'
-#' @examples
-#'
-#' ## load example data
-#'
-#' chr21_data_table <- system.file('extdata/bw', 'ALPS_example_datatable.txt', package = 'ALPS', mustWork = TRUE)
-#'
-#' ## attach path to bw_path and bed_path
-#' d_path <- dirname(chr21_data_table)
-#'
-#' chr21_data_table <- read.delim(chr21_data_table, header = TRUE)
-#' chr21_data_table$bw_path <- paste0(d_path, '/', chr21_data_table$bw_path)
-#' chr21_data_table$bed_path <- paste0(d_path, '/', chr21_data_table$bed_path)
-#'
-#' enrichments <- multiBigwig_summary(data_table = chr21_data_table,
-#'                                    summary_type = 'mean',
-#'				      data_frame_of_regions,
-#'                                    parallel = FALSE)
 
 multiBigwig_summary_SS <- function(data_table,
                                 summary_type = "mean",
