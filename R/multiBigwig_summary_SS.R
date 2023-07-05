@@ -5,7 +5,6 @@
 #' and a set of genomics regions.
 #' This function is similar to
 #' \code{deeptools multiBigwigSummary} python package.
-#'
 #' @param data_table a dataframe that contains \code{bw_path}, \code{sample_id}.
 #' \code{sample_id} ids will be used in the final result matrix
 #' @param summary_type whether to calculate mean, median, min or max
@@ -15,17 +14,10 @@
 #' @param data_frame_of_regions df containing chr, start, end for group of interest
 #' @param parallel logical. Whether to parallelize the calculation process,
 #' default is \code{TRUE}
-#'
-#' @importFrom dplyr mutate select rename rename left_join
-#' @importFrom GenomicRanges makeGRangesFromDataFrame
-#' @importFrom rtracklayer BigWigFileList summary
-#' @importFrom tibble column_to_rownames rownames_to_column
-#' @importFrom tidyr separate
-#' @importFrom BiocParallel bplapply
-#'
 #' @return data.frame of enrichments within given genomic regions
-#'
 #' @export
+#' multiBigwig_summary_SS
+#'
 
 multiBigwig_summary_SS <- function(data_table,
                                 summary_type = "mean",
