@@ -17,7 +17,7 @@ Peak_coverage_rank <- function(tsv_file_df, group_by_column,  group, background_
   bed_regions <- tsv_file_df[tsv_file_df[[group_by_column]] == group, c("chr","start","end",group_by_column)]
   
   # coverage matrix for coordinates
-  final_coverage <- multiBigwig_summary_SS(data_table = bw_table, summary_type = "mean", data_frame_of_regions = bed_regions, parallel = FALSE  )
+  final_coverage <- multiBigwig_summary_SS(data_table = bw_table, summary_type = "mean", data_frame_of_regions = bed_regions, parallel = TRUE  )
 
   
    # prop calculation
