@@ -37,14 +37,13 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
    # intersected_df <- Peak_intersect_rank(tsv_file,group_by_column_name,group, background_group)
    intersected_df_list <- list()
    intersected_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_intersect_rank(tsv_file_df,group_by_column_name,x, background_group))
-   intersected_df <-  bind_rows(intersected_df_list, .id = "column_label")
-   
+   intersected_df <-  as.data.frame(bind_rows(intersected_df_list, .id = "column_label"))
    
     # cov rank
     # cov_df <- Peak_coverage_rank(tsv_file, group_by_column_name,group ,background_group, bw_table)
     cov_df_list <- list()
     cov_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_coverage_rank(tsv_file_df, group_by_column_name,x ,background_group, bw_table))
-    cov_df <-  bind_rows(cov_df_list, .id = "column_label")
+    cov_df <-  as.data.frame(bind_rows(cov_df_list, .id = "column_label"))
     
 
    df1 <- MACS2_df %>%
