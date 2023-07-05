@@ -7,7 +7,6 @@
 #' @param group unique group in the tsv_file for that needs to be ranked 
 #' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
 #' @export
-
 Peak_intersect_rank <- function(tsv_file_df, group_by_column_name, group, background_group){
   
   print("running peak intersect rank...")
