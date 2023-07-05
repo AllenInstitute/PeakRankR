@@ -1,4 +1,16 @@
-#' A Peak_RankeR function 
+#' range function 
+#'
+#' This function scales a vector ranging from 0 - 1
+#'
+#' @param x vector that needs to be scaled
+#' @export
+#' range01()
+#' 
+
+# rank range
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+
+#' Peak_RankeR function
 #'
 #' This function calculates the final rank for group of interest against background group 
 #' 
@@ -8,20 +20,10 @@
 #' @param bw_table table of sample name and bigwig files
 #' @param rank_sum if the rank sum (0 - 1) should be provided in the output
 #' @param weights vector of the features MACS2, intersect, coverage in that order
-#' 
-#' @keywords PeakRankeR 
-#' @export
-#' @examples 
+#' @export 
 #' Peak_RankeR()
 #' 
-#' range01()
-#' 
 
-# rank range
-range01 <- function(x){(x-min(x))/(max(x)-min(x))}
-
-
-# Removing group
 Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_table, rank_sum, weights){
    #print(group)
   weights_vector <- weights
