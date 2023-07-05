@@ -4,10 +4,6 @@
 #'
 #' @param x vector that needs to be scaled
 #' @export
-#' range01()
-#' 
-
-# rank range
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 
 #' Peak_RankeR function
@@ -21,9 +17,6 @@ range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 #' @param rank_sum if the rank sum (0 - 1) should be provided in the output
 #' @param weights vector of the features MACS2, intersect, coverage in that order
 #' @export 
-#' Peak_RankeR()
-#' 
-
 Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_table, rank_sum, weights){
    #print(group)
   weights_vector <- weights
