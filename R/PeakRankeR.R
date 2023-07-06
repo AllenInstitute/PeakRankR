@@ -30,13 +30,13 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
    # intersected_df <- Peak_intersect_rank(tsv_file,group_by_column_name,group, background_group)
    intersected_df_list <- list()
    intersected_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_intersect_rank(tsv_file_df,group_by_column_name,x, background_group))
-   intersected_df <-  as.data.frame(bind_rows(intersected_df_list, .id = "column_label"))
+   intersected_df <-  bind_rows(intersected_df_list, .id = "column_label")
    
     # cov rank
     # cov_df <- Peak_coverage_rank(tsv_file, group_by_column_name,group ,background_group, bw_table)
     cov_df_list <- list()
     cov_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_coverage_rank(tsv_file_df, group_by_column_name,x ,background_group, bw_table))
-    cov_df <-  as.data.frame(bind_rows(cov_df_list, .id = "column_label"))
+    cov_df <-  bind_rows(cov_df_list, .id = "column_label")
     
 
    df1 <- MACS2_df %>%
@@ -59,9 +59,9 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
     # multiplying weights
      sum_of_weights <- sum(weights)
      # Divide by sum_of_weights
-     PP_df_norm$MACS2_rank <- (weigths_vector[1]/sum_of_weights) * PP_df_norm$MACS2_rank
-     PP_df_norm$peak_intersect_rank <- (weigths_vector[2]/sum_of_weights) * PP_df_norm$peak_intersect_rank
-     PP_df_norm$peak_cov_rank <- (weigths_vector[3]/sum_of_weights) * PP_df_norm$peak_cov_rank
+     PP_df_norm$MACS2_rank <- (weights_vector[1]/sum_of_weights) * PP_df_norm$MACS2_rank
+     PP_df_norm$peak_intersect_rank <- (weights_vector[2]/sum_of_weights) * PP_df_norm$peak_intersect_rank
+     PP_df_norm$peak_cov_rank <- (weights_vector[3]/sum_of_weights) * PP_df_norm$peak_cov_rank
 
      # multiplying weights
      #PP_df_norm$MACS2_rank <- (weights_vector[1]) * PP_df_norm$MACS2_rank
