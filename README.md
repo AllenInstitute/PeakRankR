@@ -29,7 +29,7 @@ Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = ArchR_tsv_file,
 				background_group     = unique(ArchR_tsv_file$"group_by_column"),
 				bw_table             = example_bw_table, 
 				rank_sum             = TRUE,
-				weights              = c(1,1,1)))
+				weights              = c(1,1,1))
 ```
 
 example_bw_table:
