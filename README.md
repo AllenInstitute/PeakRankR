@@ -39,6 +39,7 @@ bw_path                                    | sample_id
 /allen/programs/celltypes/Astrocytes-1.bw  | Astrocytes-1
 /allen/programs/celltypes/Astrocytes-2.bw  | Astrocytes-2
 
+Note: The sample_id column should match the group_by_column_name values!
 
        
  
