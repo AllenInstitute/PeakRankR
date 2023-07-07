@@ -29,9 +29,11 @@ Peak_intersect_rank <- function(tsv_file_df, group_by_column_name, group, backgr
   
   # count and rank
   agg_df <- df_intersected  %>% 
+    select(V1,V2,V3,V4) %>%
     group_by(V1,V2,V3,V4) %>%
     count() %>% 
-    as.data.frame()
+    as.data.frame() 
+    
   colnames(agg_df) <-  c("chr","start","end",group_by_column_name,"peak_intersect_rank")
   
   # return the df per group with the intersect rank

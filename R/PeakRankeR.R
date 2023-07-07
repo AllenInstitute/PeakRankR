@@ -31,6 +31,7 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
    intersected_df_list <- list()
    intersected_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_intersect_rank(tsv_file_df,group_by_column_name,x, background_group))
    intersected_df <-  bind_rows(intersected_df_list, .id = "column_label")
+
    
     # cov rank
     # cov_df <- Peak_coverage_rank(tsv_file, group_by_column_name,group ,background_group, bw_table)
@@ -47,7 +48,7 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
     PP_df <- df1 %>%
      left_join(cov_df)
 
-
+   
     # From here
     # Commenting from here for test
      PP_df_norm <- PP_df %>% group_by(cell.population) %>%
