@@ -1,6 +1,6 @@
 # PeakRankR
 
-The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates and group (at bare minimum) and two column file (refer test directory for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
+The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates and group (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
 
 ## Installation
 
@@ -22,22 +22,25 @@ The workflow is as follows:
 # Run
 
 ```
-tsv_file <- "input peaks file with coordinates and group name columns
-bw_table <- "path to bigwig table"
+tsv_file <- "input peaks file with coordinates and group name (cell.population) columns"
+bw_table <- "path to bigwig table" (example given below)
 Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = ArchR_tsv_file,
 				group_by_column_name = "cell.population",
 				background_group     = unique(ArchR_tsv_file$"group_by_column"),
 				bw_table             = example_bw_table, 
 				rank_sum             = TRUE,
-				weights              = c(1,1,1)))
+				weights              = c(1,1,1))
 ```
 
-example_bw_table
+example_bw_table:
 
 bw_path                                    | sample_id
 -------------------------------------------| -------------
 /allen/programs/celltypes/Astrocytes-1.bw  | Astrocytes-1
+/allen/programs/celltypes/Astrocytes-2.bw  | Astrocytes-2
 
+Note: 1. The sample_id column should match the group_by_column_name values
+      2. All arguments to the function are mandatory
 
        
  
