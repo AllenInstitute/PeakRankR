@@ -53,7 +53,7 @@ Note: 1. The sample_id column should match the group_by_column_name values
 
        
 ## License
-The license for this package is available on Github at: https://github.com/AllenInstitute/QCR/PeakRankR/master/LICENSE
+The license for this package is available on Github at: https://github.com/AllenInstitute/PeakRankR/master/LICENSE
 
 ## Level of Support
 We are planning on occasionally updating this repo with no fixed schedule, but likely several times per year. Community involvement is encouraged through both issues and pull requests. 
