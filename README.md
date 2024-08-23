@@ -52,7 +52,11 @@ Note: 1. The sample_id column should match the group_by_column_name values
       2. All arguments to the function are mandatory
 
        
- 
+## License
+The license for this package is available on Github at: https://github.com/AllenInstitute/QCR/blob/master/LICENSE
+
+## Level of Support
+We are planning on occasionally updating this repo with no fixed schedule, but likely several times per year. Community involvement is encouraged through both issues and pull requests. 
 
         
 
