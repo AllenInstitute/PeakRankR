@@ -5,8 +5,14 @@ The R Package can be used to prioritize a list of enahncers/peaks from different
 ## Installation
 
 git clone git@github.com:AllenInstitute/PeakRankR.git
+
+
 install.packages("devtools")
+
+
 library(devtools)
+
+
 build("~/put/the/package/path/here")
 
 ## Algorithm
