@@ -1,29 +1,32 @@
 # PeakRankR
 
-The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates and group (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
+The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates only/and group (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
 
 ## Installation
 
-Clone this github repo or install via: 
+git clone git@github.com:AllenInstitute/PeakRankR.git
+install.packages("devtools")
+library(devtools)
+build("~/put/the/package/path/here")
 
-install.packages("/allen/programs/celltypes/workgroups/rnaseqanalysis/sarojaS/230418_PeakRanker_package/PeakRankeR_2023-06-08/PeakRankeR/PeakRankR_0.0.0.9000.tar.gz", repos = NULL) 
+## Algorithm
 
-## Workflow
-
-The workflow is as follows:
-
-![workflow](https://github.com/AllenInstitute/PeakRankeR/blob/master/workflow.png)
-
-## Pictorial representation on scaling for rank sum
+PeakRankRscore  =  W(specificity)SpecificityPeak +
+      	           W(sensitivity)SensitivityPeak +	 
+      		   W(magnitude)MagnitudePeak
 
 
-![scaling](https://github.com/AllenInstitute/PeakRankeR/blob/master/scaling.png)
+where W stands for the weight of each feature. By default each weight variable is set to 1 indicating equal importance for all three features
 
-# Run
+## Run
 
 ```
-tsv_file <- "input peaks file with coordinates and group name (cell.population) columns"
+tsv_file <- "input peaks file with coordinates only/and group name (cell.population) columns"
 bw_table <- "path to bigwig table" (example given below)
+
+
+If group name is given:
+
 Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = ArchR_tsv_file,
 				group_by_column_name = "cell.population",
 				background_group     = unique(ArchR_tsv_file$"group_by_column"),
