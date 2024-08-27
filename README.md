@@ -27,6 +27,7 @@ where W stands for the weight of each feature. By default each weight variable i
 ## Run
 
 ```
+options(bedtools.path = \"[bedtools path]\") ## version 2.30.0
 tsv_file <- "input peaks file with coordinates only/and group name (cell.population) columns"
 bw_table <- "path to bigwig table" (example given below)
 
