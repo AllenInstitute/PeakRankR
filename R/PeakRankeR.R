@@ -54,7 +54,7 @@ Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_
     # Commenting from here for test
      PP_df_norm <- PP_df %>% group_by(cell.population) %>%
      mutate_at(c("MACS2_rank","peak_intersect_rank","peak_cov_rank"), function(x) range01(x)) %>%
-       mutate_at(~ifelse(is.nan(.), 0, .))
+       mutate_all(~ifelse(is.nan(.), 0, .))
      
   
      
