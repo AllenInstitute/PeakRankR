@@ -15,6 +15,13 @@ library(devtools)
 
 build("~/put/the/package/path/here")
 
+
+or
+
+devtools::install_github("AllenInstitute/PeakRankR", force = T)
+
+library(PeakRankR)
+
 ## Algorithm
 
 PeakRankRscore  =  W(specificity)SpecificityPeak +
@@ -34,10 +41,10 @@ bw_table <- "path to bigwig table" (example given below)
 
 If group name is given:
 
-Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = ArchR_tsv_file,
+Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = tsv_file,
 				group_by_column_name = "cell.population",
-				background_group     = unique(ArchR_tsv_file$"group_by_column"),
-				bw_table             = example_bw_table, 
+				background_group     = unique(tsv_file$"group_by_column"),
+				bw_table             = bw_table, 
 				rank_sum             = TRUE,
 				weights              = c(1,1,1))
 ```
@@ -46,8 +53,8 @@ example_bw_table:
 
 bw_path                                    | sample_id
 -------------------------------------------| -------------
-/allen/programs/celltypes/Astrocytes-1.bw  | Astrocytes-1
-/allen/programs/celltypes/Astrocytes-2.bw  | Astrocytes-2
+/path_to_/Astrocytes-1.bw  | Astrocytes-1
+/path_to_/Astrocytes-2.bw  | Astrocytes-2
 
 Note: 1. The sample_id column should match the group_by_column_name values
       2. All arguments to the function are mandatory
