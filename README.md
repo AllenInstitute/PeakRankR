@@ -41,9 +41,9 @@ bw_table <- "path to bigwig table" (example given below)
 
 If group name is given:
 
-Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = tsv_file,
+Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = test_file.tsv,
 				group_by_column_name = "cell.population",
-				background_group     = unique(tsv_file$"group_by_column"),
+				background_group     = unique(tsv_file_df$"group_by_column"),
 				bw_table             = bw_table, 
 				rank_sum             = TRUE,
 				weights              = c(1,1,1))
