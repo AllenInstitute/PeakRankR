@@ -4,8 +4,9 @@ The R Package can be used to prioritize a list of enahncers/peaks from different
 
 ## Installation of PeakRanR
 
-git clone git@github.com:AllenInstitute/PeakRankR.git
+### git clone git@github.com:AllenInstitute/PeakRankR.git
 
+```
 install.packages("devtools")
 
 library(devtools)
@@ -13,9 +14,10 @@ library(devtools)
 build("~/put/the/package/path/here")
 
 library(PeakRankR)
+```
+### or
 
-or
-
+```
 install.packages("devtools")
 
 library(devtools)
@@ -23,18 +25,22 @@ library(devtools)
 devtools::install_github("AllenInstitute/PeakRankR", force = T)
 
 library(PeakRankR)
+```
 
 ## Other required tools to run PeakRankR
 
+```
 devtools::install_github("PhanstielLab/bedtoolsr")
 
-Identiy location of bedtools using:
+# Identiy location of bedtools using:
 
 system("which bedtools")
-
+```
 ### Provide the path to bedtools like this:
 
+```
 options(bedtools.path = "/path/to/bedtools")
+```
 
 ## PeakRankR Algorithm
 
@@ -48,9 +54,9 @@ where W stands for the weight of each feature. By default each weight variable i
 ## Running PeakRankR
 
 ```
-tsv_file <- read.table("test_file.tsv",header=TRUE)  "input peaks file with coordinates only/and group name (cell.population) columns" (example: test_file.tsv)
+tsv_file <- read.table("test_file.tsv",header=TRUE)  # input peaks file with coordinates only/and group name (cell.population) columns" (example: test_file.tsv)
 
-bw_table <- read.table("bw_table.txt",header=TRUE) "path to bigwig table" (example: bw_table)
+bw_table <- read.table("bw_table.txt",header=TRUE) # path to bigwig table" (example: bw_table)
 
 
 If group name is given:
