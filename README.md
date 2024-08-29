@@ -54,9 +54,9 @@ where W stands for the weight of each feature. By default each weight variable i
 ## Running PeakRankR
 
 ```
-tsv_file <- read.table("test_file.tsv",header=TRUE)  # input peaks file with coordinates only/and group name (cell.population) columns" (example: test_file.tsv)
+tsv_file <- read.table("test_file.tsv",header=TRUE)  # input peaks file with coordinates only/and group name (cell.population) columns (example: test_file.tsv)
 
-bw_table <- read.table("bw_table.txt",header=TRUE) # path to bigwig table" (example: bw_table)
+bw_table <- read.table("bw_table.txt",header=TRUE) # path to bigwig table (example: bw_table)
 
 
 If group name is given:
