@@ -32,7 +32,7 @@ Identiy location of bedtools using:
 
 system("which bedtools")
 
-# Provide the path to bedtools like this:
+### Provide the path to bedtools like this:
 
 options(bedtools.path = "/path/to/bedtools")
 
@@ -64,9 +64,11 @@ Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = tsv_file,
 ```
 
 
-Note: 1. In the bw_table file, the sample_id column should match the group_by_column_name values
+### Note: 
 
-      2. All arguments to the function are mandatory
+1. In the bw_table file, the sample_id column should match the group_by_column_name values
+
+2. All arguments to the function are mandatory
 
        
 ## License
