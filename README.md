@@ -58,7 +58,7 @@ bw_table <- read.table("bw_table.txt",header=TRUE) # path to bigwig table (examp
 
 Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = tsv_file,
 				group_by_column_name = "cell.population",
-				background_group     = unique(tsv_file_df$"group_by_column"),
+				background_group     = unique(tsv_file$"cell.population"),
 				bw_table             = bw_table, 
 				rank_sum             = TRUE,
 				weights              = c(1,1,1))
