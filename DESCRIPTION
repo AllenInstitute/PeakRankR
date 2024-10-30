@@ -9,7 +9,8 @@ Authors@R:
 URL: https://github.com/
 Description: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
 License: GPL-3
-Depends: bedtoolsr,
+Depends: 
+    bedtoolsr,
     data.table,
     dplyr,
     tidyr,
