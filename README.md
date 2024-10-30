@@ -19,18 +19,11 @@ devtools::install_github("PhanstielLab/bedtoolsr")
 ## Installation of PeakRanR
 
 ```
-devtools::install_github("AllenInstitute/PeakRankR", force = T)
+devtools::install_github("AllenInstitute/PeakRankR", dependencies = T)
 library(PeakRankR)
 
 ```
 
-## Other 
-### Provide the path to bedtools like this:
-
-```
-options(bedtools.path = "/path/to/bedtools")
-
-```
 
 ## PeakRankR Algorithm
 
