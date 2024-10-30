@@ -11,7 +11,6 @@ Description: PeakRankR takes enhancer peaks and ranks them for each cell type ba
 License: GPL-3
 Imports: 
     bedtoolsr,
-    data.table,
     dplyr,
     tidyr,
     BiocParallel
