@@ -1,36 +1,30 @@
 # PeakRankR
 
-The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates, group andmagnitude (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
+The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates, group and magnitude (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
 
+## required tools to run PeakRankR
+
+```
+# Identiy location of bedtools using:
+system("which bedtools")
+# If not installed please install bedtools using https://bedtools.readthedocs.io/en/latest/content/installation.html#
+options(bedtools.path = "/path/to/")
+
+# bedtoolsr installation 
+install.packages("devtools")
+library(devtools)
+devtools::install_github("PhanstielLab/bedtoolsr")
+
+```
 ## Installation of PeakRanR
 
-### git clone git@github.com:AllenInstitute/PeakRankR.git
-
 ```
-install.packages("devtools")
-library(devtools)
-build("~/put/the/package/path/here")
-library(PeakRankR)
-
-```
-### or
-
-```
-install.packages("devtools")
-library(devtools)
 devtools::install_github("AllenInstitute/PeakRankR", force = T)
 library(PeakRankR)
 
 ```
 
-## Other required tools to run PeakRankR
-
-```
-devtools::install_github("PhanstielLab/bedtoolsr")
-# Identiy location of bedtools using:
-system("which bedtools")
-
-```
+## Other 
 ### Provide the path to bedtools like this:
 
 ```
