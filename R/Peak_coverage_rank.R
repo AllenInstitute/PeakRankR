@@ -25,8 +25,16 @@ Peak_coverage_rank <- function(tsv_file_df, group_by_column,  group, background_
   final_coverage$coverage_sum <- rowSums(final_coverage[,c(4:dim(final_coverage)[2])])
   final_coverage$coverage_prop <- final_coverage[,colnames(final_coverage) == group]/final_coverage$coverage_sum
 
-  final_coverage <- as.data.table(final_coverage) 
-  final_coverage[, peak_cov_rank := rleid(coverage_prop[order(-coverage_prop)])] 
+  # Order coverage_prop in decreasing order
+  ordered_indices <- order(-final_coverage$coverage_prop)
+
+  # Apply rleid to the sorted values
+  ranked <- data.table::rleid(final_coverage$coverage_prop[ordered_indices])
+
+  # Assign the ranks to a new column, maintaining original order
+  final_coverage$peak_cov_rank <- NA
+  final_coverage$peak_cov_rank[ordered_indices] <- ranked
+
 
   # setDT(final_coverage)[order(-coverage_prop), peak_cov_rank := rleid(coverage_prop)]
  
