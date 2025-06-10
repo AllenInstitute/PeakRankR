@@ -1,103 +1,64 @@
-#' Enrichments at genomics regions (Adapted from ALPS)
+#' Summarize signal from BigWig files over genomic regions
 #'
-#' @description \code{multiBigwig_summary} is a function to calculate
-#' enrichments from a set of given bigwig files
-#' and a set of genomics regions.
-#' This function is similar to
-#' \code{deeptools multiBigwigSummary} python package.
-#' @param data_table a dataframe that contains \code{bw_path}, \code{sample_id}.
-#' \code{sample_id} ids will be used in the final result matrix
-#' @param summary_type whether to calculate mean, median, min or max
-#' for each genomic region in within consensus peak-set
-#' from the bigwig files. Default is \code{mean}
-#' Added by SS
-#' @param data_frame_of_regions df containing chr, start, end for group of interest
-#' @param parallel logical. Whether to parallelize the calculation process,
-#' default is \code{TRUE}
-#' @return data.frame of enrichments within given genomic regions
+#' @description Computes summary statistics (mean, median, min, or max)
+#' across genomic regions from multiple BigWig files.
+#' Inspired by deeptools' multiBigwigSummary, bedtoolsr (Phanstiel lab)
+#'
+#' @param data_table A data.frame with columns `bw_path` and `sample_id`
+#' @param data_frame_of_regions A data.frame with columns `chr`, `start`, `end`
+#' @param summary_type Summary type: "mean", "median", "min", or "max" (default = "mean")
+#' @param parallel Logical. Use parallel processing? Default is TRUE.
+#' @return A data.frame with signal summaries per region per sample
 #' @export
+
 multiBigwig_summary_SS <- function(data_table,
-                                summary_type = "mean",
-				# Added by SS
-				data_frame_of_regions,
-                                parallel = TRUE) {
-
-    assertthat::assert_that(is.data.frame(data_table), msg = "Please provide `data_table`")
-    assertthat::assert_that(assertthat::has_name(data_table, "bw_path"))
-    assertthat::assert_that(assertthat::has_name(data_table, "sample_id"))
-    # Added by SS
-    #assertthat::assert_that(assertthat::has_name(data_table, "bed_path"))
-
-    ## create a consensus peak-set from all
-    ## files
-    # Added by SS
-    #all_beds <- data_table$bed_path %>% as.character()
-    # Added by SS
-    #peaks_gr <- merge_GR(x = all_beds)
-    # Added by SS
-    peaks_gr <- GenomicRanges::makeGRangesFromDataFrame(df = data_frame_of_regions, seqnames.field = "chr", start.field = "start", end.field = "end", keep.extra.columns = TRUE)
-
-    ## bw list
-    all_bw_files <- data_table$bw_path %>% as.character()
-    names(all_bw_files) <- data_table$sample_id %>% as.character()
-
-    bwL <- rtracklayer::BigWigFileList(all_bw_files)
-
-    if (parallel) {
-
-        .par_fun <- function(x) {
-          
-          # Added by SS
-          # to give the string as column name to dplyr
-           #x <- sym(x)
-          x_bw <- bwL[[x]]
-            
-            x_res <- rtracklayer::summary(x_bw,
-                peaks_gr, type = summary_type) %>%
-                as.data.frame() %>% dplyr::mutate(region = paste(seqnames, start, end, sep = "_")) %>%
-                tibble::column_to_rownames(var = "region") %>%
-                dplyr::select(score) 
-            #%>%
-             #   dplyr::rename(`:=`(!!x, score))
-            # Added by SS
-              colnames(x_res) <- x
-
-            return(x_res)
-        }
-
-        all_pid <- bwL %>% names
-
-        all_pid_reslst <- BiocParallel::bplapply(all_pid, .par_fun)
-
-        count_mat <- all_pid_reslst %>% as.data.frame()
-          # Added by SS
-          colnames(count_mat) <- all_pid
-        
-          count_mat <- count_mat %>% tibble::rownames_to_column(var = "region") %>%
-            tidyr::separate(region, into = c("chr", "start", "end"))
-
-    } else {
-
-        count_mat <- peaks_gr %>% as.data.frame() %>%
-            dplyr::mutate(region = paste(seqnames, start, end, sep = "_")) %>%
-            dplyr::select(region)
-
-        for (i in 1:length(bwL)) {
-
-            sample_id <- bwL[i] %>% names
-            sample_path <- bwL[[i]]
-
-            sample_res <- rtracklayer::summary(sample_path, peaks_gr, type = summary_type) %>%
-              as.data.frame() %>%
-              dplyr::mutate(region = paste(seqnames, start, end, sep = "_")) %>%
-              dplyr::select(region, score) %>%
-              dplyr::rename(`:=`(!!sample_id, score))
-
-            suppressMessages(count_mat <- dplyr::left_join(count_mat, sample_res, by = "region"))
-        }
-        count_mat <- count_mat %>%
-          tidyr::separate(region, into = c("chr", "start", "end"))
-    }
-    return(count_mat)
+                                   data_frame_of_regions,
+                                   summary_type = "mean",
+                                   parallel = TRUE) {
+  
+  ## Validate input
+  stopifnot(is.data.frame(data_table),
+            all(c("bw_path", "sample_id") %in% colnames(data_table)))
+  
+  ## Convert input regions to GRanges
+  peaks_gr <- GenomicRanges::makeGRangesFromDataFrame(
+    df = data_frame_of_regions,
+    seqnames.field = "chr",
+    start.field = "start",
+    end.field = "end",
+    keep.extra.columns = TRUE
+  )
+  
+  ## Prepare BigWig files
+  bw_files <- setNames(as.character(data_table$bw_path),
+                       data_table$sample_id)
+  bw_list <- rtracklayer::BigWigFileList(bw_files)
+  
+  ## Function to summarize one BigWig over all regions
+  summarize_one <- function(sample_id) {
+    summary_df <- as.data.frame(rtracklayer::summary(bw_list[[sample_id]], peaks_gr, type = summary_type))
+    ## Use :: as separator to avoid splitting seqnames
+    summary_df$region <- paste(summary_df$seqnames, summary_df$start, summary_df$end, sep = "::")
+    rownames(summary_df) <- summary_df$region
+    summary_df <- summary_df["score", drop = FALSE]
+    colnames(summary_df) <- sample_id
+    return(summary_df)
+  }
+  
+  
+  
+  ## Apply summarization across all samples
+  sample_ids <- names(bw_list)
+  
+  summary_list <- if (parallel) {
+    BiocParallel::bplapply(sample_ids, summarize_one)
+  } else {
+    lapply(sample_ids, summarize_one)
+  }
+  
+  ## Combine into matrix
+  count_mat <- do.call(cbind, summary_list)
+  count_mat <- tibble::rownames_to_column(count_mat, "region")
+  count_mat <- tidyr::separate(count_mat, region, into = c("chr", "start", "end"), sep = "::", convert = TRUE)
+  return(count_mat)
 }
-

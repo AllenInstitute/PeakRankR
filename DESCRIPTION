@@ -1,15 +1,20 @@
 Package: PeakRankR
-Title: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
-Version: 0.0.0.9000
-Authors@R: 
+Title: Rank Genomic Peaks by Coverage and Magnitude Across Cell Types
+Version: 0.0.0.9001
+Authors@R:
     person(given = "Saroja",
            family = "Somasundaram",
            role = c("aut", "cre"),
            email = "sarojas@alleninstitute.org")
-URL: https://github.com/
-Description: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
+Description: 
+    PeakRankR provides a pipeline to summarize BigWig signal over genomic regions, 
+    compute cell-type-specific ranks using coverage proportion and signal magnitude, 
+    and extract the top-ranked peaks per sample. 
+    Optionally supports weighting rank components and generating UCSC Genome Browser links.
 License: GPL-3
-Imports: 
+URL: https://github.com/yourusername/PeakRankR
+BugReports: https://github.com/yourusername/PeakRankR/issues
+Imports:
     bedtoolsr,
     dplyr,
     tidyr,
@@ -20,3 +25,4 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+

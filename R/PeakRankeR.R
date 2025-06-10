@@ -1,91 +1,104 @@
-#' range function 
+#' Process BigWig Signal Pipeline to Rank Peaks and Extract Top Regions
 #'
-#' This function scales a vector ranging from 0 - 1
+#' This function runs a multi-step pipeline to summarize BigWig signal over genomic regions,
+#' calculate peak coverage proportion and magnitude ranks, combine these ranks (optionally weighted),
+#' and then extract the top N ranked peaks per sample. Optionally, it adds UCSC Genome Browser URLs for visualization.
 #'
-#' @param x vector that needs to be scaled
+#' @param bw_table A data.frame or tibble containing BigWig file paths and associated metadata.
+#' @param regions_df A data.frame of genomic regions to summarize (must include chr, start, end, Peak_ID).
+#' @param summary_type Character string specifying the summary statistic to use for BigWig signal aggregation (default: "mean").
+#' @param n_top_values Integer specifying the number of top peaks to extract per sample (default: 500).
+#' @param make_ucsc_url Logical indicating whether to add UCSC Genome Browser URL links to the output (default: TRUE).
+#' @param base_url Character string of the base URL for UCSC Genome Browser links (no default; required if `make_ucsc_url = TRUE`).
+#' @param weights Numeric vector of length 2 to weight coverage and magnitude ranks respectively (default: c(1, 1)).
+#'
+#' @return A data.frame with top ranked peaks per sample, including columns: chr, start, end, Peak_ID, subclass (sample),
+#' and optionally UCSC_URL if `make_ucsc_url = TRUE`.
+#'
+#' @import dplyr
+#' @import tidyr
 #' @export
-range01 <- function(x){(x-min(x))/(max(x)-min(x))}
-
-#' Peak_RankeR function
-#'
-#' This function calculates the final rank for group of interest against background group 
-#' 
-#' @param tsv_file_df CERP tsv_file_df REQUIRED
-#' @param group_by_column column name in the tsv_file that has the groups 
-#' @param background_group list of groups from tsv_file with which the group peaks should be intersected 
-#' @param bw_table table of sample name and bigwig files
-#' @param rank_sum if the rank sum (0 - 1) should be provided in the output
-#' @param weights vector of the features MACS2, intersect, coverage in that order
-#' @export 
-Peak_RankeR <- function(tsv_file_df, group_by_column_name, background_group, bw_table, rank_sum, weights){
-   #print(group)
-  weights_vector <- weights
-  print(weights_vector)
+process_bigwig_pipeline <- function(bw_table,
+                                    regions_df,
+                                    summary_type = "mean",
+                                    n_top_values = 500,
+                                    make_ucsc_url = TRUE,
+                                    base_url = NULL,
+                                    weights = c(1, 1)) {
+  if (make_ucsc_url && (is.null(base_url) || base_url == "")) {
+    stop("Argument 'base_url' must be provided if 'make_ucsc_url' is TRUE.")
+  }
   
-   # MACS2 rank
-   MACS2_df <- Peak_MACS2_rank(tsv_file_df, group_by_column_name)
-   MACS2_df_sub <- MACS2_df[,c("chr","start","end",group_by_column_name,"MACS2_rank")]
+  if (!is.numeric(weights) || length(weights) != 2) {
+    stop("Argument 'weights' must be a numeric vector of length 2 (e.g., c(1, 1))")
+  }
   
-   
-   # intersect rank
-   # intersected_df <- Peak_intersect_rank(tsv_file,group_by_column_name,group, background_group)
-   intersected_df_list <- list()
-   intersected_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_intersect_rank(tsv_file_df,group_by_column_name,x, background_group))
-   intersected_df <-  bind_rows(intersected_df_list, .id = "column_label")
-
-   
-    # cov rank
-    # cov_df <- Peak_coverage_rank(tsv_file, group_by_column_name,group ,background_group, bw_table)
-    cov_df_list <- list()
-    cov_df_list <- lapply(unique(tsv_file_df[[group_by_column_name]]), function(x) Peak_coverage_rank(tsv_file_df, group_by_column_name,x ,background_group, bw_table))
-    cov_df <-  bind_rows(cov_df_list, .id = "column_label")
-    
-
-   df1 <- MACS2_df %>%
-      left_join(intersected_df) 
-    #%>%
-     #select("chr","start","end",group_by_column_name,"MACS2_rank","peak_intersect_rank")
-   # interchanged MACS2 and intersect df
-    PP_df <- df1 %>%
-     left_join(cov_df)
-
-   
-    # From here
-    # Commenting from here for test
-     PP_df_norm <- PP_df %>% group_by(cell.population) %>%
-     mutate_at(c("MACS2_rank","peak_intersect_rank","peak_cov_rank"), function(x) range01(x)) %>%
-       mutate_all(~ifelse(is.nan(.), 0, .))
-     
+  message("Running multiBigwig_summary_SS...")
+  multi_summary <- multiBigwig_summary_SS(
+    data_table = bw_table,
+    data_frame_of_regions = regions_df,
+    summary_type = summary_type,
+    parallel = TRUE
+  )
   
-     
-    # multiplying weights
-     sum_of_weights <- sum(weights)
-     # Divide by sum_of_weights
-     PP_df_norm$MACS2_rank <- (weights_vector[1]/sum_of_weights) * PP_df_norm$MACS2_rank
-     PP_df_norm$peak_intersect_rank <- (weights_vector[2]/sum_of_weights) * PP_df_norm$peak_intersect_rank
-     PP_df_norm$peak_cov_rank <- (weights_vector[3]/sum_of_weights) * PP_df_norm$peak_cov_rank
-
-     # multiplying weights
-     #PP_df_norm$MACS2_rank <- (weights_vector[1]) * PP_df_norm$MACS2_rank
-     #PP_df_norm$peak_intersect_rank <- (weights_vector[2]) * PP_df_norm$peak_intersect_rank
-     #PP_df_norm$peak_cov_rank <- (weights_vector[3]) * PP_df_norm$peak_cov_rank
-     
-
-    PP_df_norm$rank_sum  <- rowSums(PP_df_norm[c("MACS2_rank","peak_intersect_rank","peak_cov_rank")])
-    PP_df_norm <- as.data.frame(PP_df_norm)
-    
-    PP_df_final <- PP_df_norm %>% 
-      group_by(cell.population) %>%
-      mutate(PeakRankeR_rank = as.numeric(as.factor(frank(rank_sum, ties.method = "min"))))
-   
-    PP_df_final <- as.data.frame(PP_df_final)
-    if(rank_sum) {
-      PP_df_norm_sub <- PP_df_final[,!(names(PP_df_final) %in% c("MACS2_rank","peak_intersect_rank","peak_cov_rank","column_label"))]
-      return(PP_df_norm_sub)
-    }else{
-      PP_df_norm_sub <- PP_df_final[,!(names(PP_df_final) %in% c("MACS2_rank","peak_intersect_rank","peak_cov_rank","column_label","rank_sum"))]
-      return(PP_df_norm_sub)
-     }
-
+  ## Running Peak_coverage_rank
+  cov_df_norm_ranked <- Peak_coverage_rank(
+    multiBigwig_summary_df = multi_summary,
+    bw_table = bw_table
+  )
+  
+  ## Running Peak_magnitude_rank
+  mag_df_norm_ranked <- Peak_magnitude_rank(
+    multiBigwig_summary_df = multi_summary,
+    bw_table = bw_table
+  )
+  
+  message("Combining ranks with weights")
+  coord_cols <- c("chr", "start", "end")
+  sample_cols <- setdiff(colnames(cov_df_norm_ranked), coord_cols)
+  
+  ## Apply weights to coverage and magnitude ranks
+  sum_mat <- weights[1] * cov_df_norm_ranked[, sample_cols] +
+    weights[2] * mag_df_norm_ranked[, sample_cols]
+  
+  ## Combine with coordinates
+  sum_meta <- cbind(cov_df_norm_ranked[, coord_cols], sum_mat)
+  
+  ## Function to extract top n rows per column
+  top_n_rows <- function(column, n = n_top_values) {
+    sorted_indices <- order(column)
+    sum_meta[sorted_indices[1:min(n, length(sorted_indices))], coord_cols, drop = FALSE]
+  }
+  
+  ## Apply top_n_rows to each sample
+  sorted_list <- lapply(sample_cols, function(col) {
+    top_n_rows(sum_meta[[col]], n_top_values)
+  })
+  names(sorted_list) <- sample_cols
+  
+  ## Add subclass info
+  list_with_subclass <- Map(function(df, group) {
+    cbind(df, subclass = group)
+  }, sorted_list, names(sorted_list))
+  
+  ## Combine and add rank
+  df <- do.call(rbind, lapply(list_with_subclass, function(df_group) {
+    df_group$rank <- seq_len(nrow(df_group))
+    df_group
+  }))
+  rownames(df) <- NULL
+  
+  ## Convert types
+  df$start <- as.integer(as.character(df$start))
+  df$end <- as.integer(as.character(df$end))
+  
+  ## Optional UCSC URL
+  if (make_ucsc_url) {
+    df$UCSC_URL <- paste0(
+      base_url,
+      df$chr, "%3A", df$start, "%2D", df$end
+    )
+  }
+  
+  return(df)
 }
-

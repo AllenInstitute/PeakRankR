@@ -1,3 +1,3 @@
 bw_path	sample_id
-path_to_/Astrocytes-1.bw  Astrocytes-1
-path_to_/Astrocytes-2.bw  Astrocytes-2
+/allen/programs/celltypes/workgroups/rnaseqanalysis/sarojaS/JOSS_submission/PeakRankR_repo/PeakRankR/Endo.bw	Endo
+/allen/programs/celltypes/workgroups/rnaseqanalysis/sarojaS/JOSS_submission/PeakRankR_repo/PeakRankR/Astrocyte.bw	Astrocyte

@@ -2,36 +2,29 @@
 % Please edit documentation in R/multiBigwig_summary_SS.R
 \name{multiBigwig_summary_SS}
 \alias{multiBigwig_summary_SS}
-\title{Enrichments at genomics regions (Adapted from ALPS)}
+\title{Summarize signal from BigWig files over genomic regions}
 \usage{
 multiBigwig_summary_SS(
   data_table,
-  summary_type = "mean",
   data_frame_of_regions,
+  summary_type = "mean",
   parallel = TRUE
 )
 }
 \arguments{
-\item{data_table}{a dataframe that contains \code{bw_path}, \code{sample_id}.
-\code{sample_id} ids will be used in the final result matrix}
+\item{data_table}{A data.frame with columns \code{bw_path} and \code{sample_id}}
 
-\item{summary_type}{whether to calculate mean, median, min or max
-for each genomic region in within consensus peak-set
-from the bigwig files. Default is \code{mean}
-Added by SS}
+\item{data_frame_of_regions}{A data.frame with columns \code{chr}, \code{start}, \code{end}}
 
-\item{data_frame_of_regions}{df containing chr, start, end for group of interest}
+\item{summary_type}{Summary type: "mean", "median", "min", or "max" (default = "mean")}
 
-\item{parallel}{logical. Whether to parallelize the calculation process,
-default is \code{TRUE}}
+\item{parallel}{Logical. Use parallel processing? Default is TRUE.}
 }
 \value{
-data.frame of enrichments within given genomic regions
+A data.frame with signal summaries per region per sample
 }
 \description{
-\code{multiBigwig_summary} is a function to calculate
-enrichments from a set of given bigwig files
-and a set of genomics regions.
-This function is similar to
-\code{deeptools multiBigwigSummary} python package.
+Computes summary statistics (mean, median, min, or max)
+across genomic regions from multiple BigWig files.
+Inspired by deeptools' multiBigwigSummary, bedtoolsr (Phanstiel lab)
 }
