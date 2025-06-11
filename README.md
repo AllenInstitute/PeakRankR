@@ -2,7 +2,7 @@
 
 # PeakRankR
 
-The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates, group and magnitude (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
+The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in 3 coloumn bed file with coordinates (header required) and two column file listing the bigwig file path and sample id as input and returns the tsv file with n_top (user provided) prioritized peaks for each group
 
 ## Required tools to install and run PeakRankR
 
@@ -21,45 +21,37 @@ devtools::install_github("PhanstielLab/bedtoolsr")
 ## Installation of PeakRanR
 
 ```
-devtools::install_github("AllenInstitute/PeakRankR", dependencies = T)
-library(PeakRankR)
+git clone --branch saroja-updated-branch https://github.com/AllenInstitute/PeakRankR.git
+devtools::install(".") # From the directory with the description file
 
 ```
 
 
 ## PeakRankR Algorithm
 
-PeakRankRscore  =  W(specificity)SpecificityPeak +
-      	           W(sensitivity)SensitivityPeak +	 
-      		   W(magnitude)MagnitudePeak
+PeakRankRscore  =  W(specificity)SpecificityPeak + W(magnitude)MagnitudePeak
 
 
-where W stands for the weight of each feature. By default each weight variable is set to 1 indicating equal importance for all three features
+where W stands for the weight of each feature. By default each weight variable is set to 1 indicating equal importance for both features
 
 ## Running PeakRankR
 
 ```
-tsv_file <- read.table("test_file.tsv",header=TRUE)  # input peaks file with coordinates only/and group name (cell.population) columns (example: test_file.tsv)
-bw_table <- read.table("bw_table.txt",header=TRUE) # path to bigwig table (example: bw_table)
+tsv_file <- read.table("test_file.tsv",header=TRUE)  # input 3 column bed file with coordinates and header. If no header, then add colnames c("chr", "start, "end")
+bw_table <- read.table("bw_table.txt",header=TRUE) #  bigwig and sample table example (bw_table)
 
 
-# If group name is given:
 
-Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = tsv_file,
-				group_by_column_name = "cell.population",
-				background_group     = unique(tsv_file$"cell.population"),
-				bw_table             = bw_table, 
-				rank_sum             = TRUE,
-				weights              = c(1,1,1))
+
+PeakRankR::process_bigwig_pipeline(bw_table = bw_table,
+                                   regions_df = tsv_file,
+                                   summary_type = "mean",
+                                   n_top_values = 5,
+                                   make_ucsc_url = FALSE,
+                                   weights = c(1,1))
 
 ```
 
-
-### Note: 
-
-1. In the bw_table file, the sample_id column should match the group_by_column_name values
-
-2. All arguments to the function are mandatory
 
        
 ## License
