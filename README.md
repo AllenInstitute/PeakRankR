@@ -52,7 +52,8 @@ PeakRankR::process_bigwig_pipeline(bw_table = bw_table,
 
 ```
 
-
+## To do:
+Return features for peak universe: Rows:peaks Columns:Cell types and other features as a separate function 
        
 ## License
 The license for this package is available on Github at: https://github.com/AllenInstitute/PeakRankR/blob/master/LICENSE
