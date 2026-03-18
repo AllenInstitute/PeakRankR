@@ -2,10 +2,10 @@
 title: "PeakRankR: An R package for ranking enhancer peaks for cloning"
 authors:
   - name: Saroja Somasundaram
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0002-3729-9849
     affiliation: Allen Institute
   - name: Nelson Johansen
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0002-4436-969X
     affiliation: Allen Institute
 date: 2025
 paperurl: https://github.com/AllenInstitute/PeakRankR
@@ -42,20 +42,20 @@ Each weight defaults to 1 (equal importance) but is fully user-configurable.
 - **Specificity**: Normalised ratio of the target group's mean bigwig signal
   to the mean signal across all background groups. Higher values indicate the
   peak is more active in the target group than in others.
-- **Sensitivity**: Fraction of target-group bigwig files (samples/replicates)
-  where the peak has signal > 0. Higher values indicate the peak is
-  consistently active across replicates.
+- **Sensitivity**: Fraction of all groups that have NO signal at this peak.
+  A peak active in only one group scores highest. A peak active in all groups
+  scores 0. Computed as: 1 - (groups_with_signal / total_groups).
 - **Magnitude**: Normalised mean bigwig signal level at the peak.
 
-Bigwig signal extraction is performed via `bedtoolsr::bt.map`, which wraps
-the `bedtools map` command. Final ranking uses either a rank-sum approach
+Bigwig signal extraction is performed via `rtracklayer::import()`, which reads
+bigwig files directly without conversion. Final ranking uses either a rank-sum approach
 (default) or direct composite score ordering.
 
 ## Features
 
 - Flexible group column — works with any column name (cell type, subclass,
   cluster, etc.), not just hardcoded names.
-- Multiple bigwig replicates per group are supported and averaged.
+- One bigwig file per group — each sample_id in the bw_table is treated as a distinct group.
 - User-configurable weights for specificity, sensitivity, and magnitude.
 - Input validation with clear, actionable error messages.
 - `check_bedtools()` utility to verify the system dependency before running.

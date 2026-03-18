@@ -83,9 +83,9 @@ peaks    <- read.table(tsv_path, header = TRUE, sep = "\t")
 bw_table <- read.table(bw_path,  header = TRUE, sep = "\t")
 
 head(peaks)
-#>    chr   start     end magnitude  cell_type
-#> 1 chr1 1000000 1001000      8.32 Excitatory
-#> 2 chr1 2000000 2001500      5.10 Inhibitory
+#>    chr    start      end cell.population
+#> 1 chr6 31131000 31131500    Astrocytes-1
+#> 2 chr6 31126700 31127200    Astrocytes-1
 ```
 
 The **bigwig table** must have exactly two columns: `file_path` and `sample_id`.
@@ -107,11 +107,11 @@ head(bw_table)
 ```{r rank}
 ranked <- Peak_RankR(
   tsv_file_df          = peaks,
-  group_by_column_name = "cell_type",            # column in peaks
-  background_group     = unique(peaks$cell_type), # all groups as background
+  group_by_column_name = "cell.population",
+  background_group     = unique(peaks$cell.population),
   bw_table             = bw_table,
   rank_sum             = TRUE,
-  weights              = c(1, 1, 1)               # equal weights
+  weights              = c(1, 1, 1)
 )
 
 # View top-ranked peaks per group
@@ -145,7 +145,7 @@ To prioritise specificity over the other features:
 ```{r weights}
 ranked_specific <- Peak_RankR(
   tsv_file_df          = peaks,
-  group_by_column_name = "cell_type",
+  group_by_column_name = "cell.population",
   bw_table             = bw_table,
   weights              = c(3, 1, 1)   # specificity weight tripled
 )
@@ -160,7 +160,7 @@ ranked_specific <- Peak_RankR(
 | Column | Description |
 |---|---|
 | `specificity_score` | Normalised ratio of target signal to background |
-| `sensitivity_score` | Fraction of groups with NO signal at this peak — higher means fewer groups share this peak |
+| `sensitivity_score` | 1 - (groups with signal / total groups) — higher means fewer groups share this peak |
 | `magnitude_score` | Normalised mean signal level |
 | `PeakRankR_score` | Weighted composite score |
 | `PeakRankR_rank` | Rank within the group (1 = best candidate) |

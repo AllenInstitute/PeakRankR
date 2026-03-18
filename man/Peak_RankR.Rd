@@ -34,8 +34,9 @@ sensitivity, magnitude. Default: \code{c(1, 1, 1)}.}
 \item{chr_col}{Column name for chromosome. Default: \code{"chr"}.}
 \item{start_col}{Column name for start coordinate. Default: \code{"start"}.}
 \item{end_col}{Column name for end coordinate. Default: \code{"end"}.}
-\item{magnitude_col}{Column name for signal magnitude. Default:
-\code{"magnitude"}.}
+\item{magnitude_col}{Column name for signal magnitude in \code{tsv_file_df}.
+If \code{NULL} (default), magnitude is computed automatically from the
+mean bigwig signal of the target group at each peak.}
 \item{verbose}{Logical. Print progress messages. Default: \code{TRUE}.}
 }
 \value{

@@ -22,7 +22,7 @@ PeakRankR_score = W(specificity) × Specificity
 | Component | Definition |
 |---|---|
 | **Specificity** | Normalised ratio of target-group signal to mean background signal |
-| **Sensitivity** | Fraction of target-group samples with signal > 0 at the peak |
+| **Sensitivity** | Fraction of groups with NO signal at this peak — fewer groups sharing a peak = higher score |
 | **Magnitude** | Normalised mean signal level |
 
 All three components are min-max normalised to [0, 1] before weighting. By default each weight is 1 (equal importance).
@@ -119,22 +119,22 @@ Tab-separated. Required columns (names are configurable via function arguments):
 | Chromosome | `chr_col` | `chr` | e.g. `chr1` |
 | Start | `start_col` | `start` | 0-based start coordinate |
 | End | `end_col` | `end` | End coordinate |
-| Magnitude | `magnitude_col` | `magnitude` | Signal strength / fold-change |
+| Magnitude | `magnitude_col` | *(optional)* | Signal strength — if omitted, auto-computed from bigwig |
 | Group | `group_by_column_name` | `cell_type` | Cell type or group label |
 
-Example using the default column names:
+The bundled example (`inst/extdata/test_file.tsv`) uses `cell.population` as the group column and has no magnitude column — magnitude is computed automatically from the bigwig signal:
 ```
-chr	start	end	magnitude	cell_type
-chr1	1000000	1001000	8.32	Excitatory
-chr1	2000000	2001500	5.10	Inhibitory
+chr	start	end	cell.population
+chr6	31131000	31131500	Astrocytes-1
+chr6	31126700	31127200	Astrocytes-1
 ```
 
-If your data uses different column names (e.g. `"subclass"`, `"peak.magnitude"`):
+If your data has different column names or includes a pre-computed magnitude column:
 ```r
 Peak_RankR(
   tsv_file_df          = my_peaks,
-  group_by_column_name = "subclass",
-  magnitude_col        = "peak.magnitude"
+  group_by_column_name = "subclass",     # your group column
+  magnitude_col        = "peak.score"    # optional: omit to auto-compute from bw
 )
 ```
 
@@ -149,7 +149,7 @@ file_path	sample_id
 /data/bw/Inhibitory_rep1.bw	Inhibitory
 ```
 
-Multiple bigwig files per group (replicates) are supported.
+One bigwig file per group. Each `sample_id` in your bw_table is treated as a distinct group.
 
 ---
 
