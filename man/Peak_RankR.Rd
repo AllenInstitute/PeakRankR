@@ -14,7 +14,7 @@ Peak_RankR(
   chr_col = "chr",
   start_col = "start",
   end_col = "end",
-  magnitude_col = "magnitude",
+  magnitude_col = NULL,
   verbose = TRUE
 )
 }
@@ -60,8 +60,8 @@ bw_table <- read.table(
 )
 ranked <- Peak_RankR(
   tsv_file_df          = tsv_file,
-  group_by_column_name = "cell_type",
-  background_group     = unique(tsv_file$cell_type),
+  group_by_column_name = "cell.population",
+  background_group     = unique(tsv_file$cell.population),
   bw_table             = bw_table
 )
 }

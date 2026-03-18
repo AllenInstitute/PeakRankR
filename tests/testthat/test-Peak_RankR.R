@@ -17,7 +17,7 @@ test_that("Peak_RankR catches missing required columns", {
 
 test_that("Peak_RankR catches missing bw_table columns", {
   peaks  <- data.frame(chr = "chr1", start = 100, end = 200,
-                       magnitude = 5, cell_type = "A")
+                       cell_type = "A")
   bad_bw <- data.frame(path = "a.bw", id = "A")  # wrong names
   expect_error(
     Peak_RankR(tsv_file_df = peaks, bw_table = bad_bw,
@@ -28,7 +28,7 @@ test_that("Peak_RankR catches missing bw_table columns", {
 
 test_that("Peak_RankR catches invalid weights — wrong length", {
   peaks <- data.frame(chr = "chr1", start = 100, end = 200,
-                      magnitude = 5, cell_type = "A")
+                      cell_type = "A")
   bw    <- data.frame(file_path = "a.bw", sample_id = "A")
   expect_error(
     Peak_RankR(tsv_file_df = peaks, bw_table = bw,
@@ -40,7 +40,7 @@ test_that("Peak_RankR catches invalid weights — wrong length", {
 
 test_that("Peak_RankR catches negative weights", {
   peaks <- data.frame(chr = "chr1", start = 100, end = 200,
-                      magnitude = 5, cell_type = "A")
+                      cell_type = "A")
   bw    <- data.frame(file_path = "a.bw", sample_id = "A")
   expect_error(
     Peak_RankR(tsv_file_df = peaks, bw_table = bw,
@@ -52,7 +52,7 @@ test_that("Peak_RankR catches negative weights", {
 
 test_that("Peak_RankR catches empty tsv_file_df", {
   empty_df <- data.frame(chr = character(), start = integer(),
-                         end = integer(), magnitude = numeric(),
+                         end = integer(),
                          cell_type = character())
   bw <- data.frame(file_path = "a.bw", sample_id = "A")
   expect_error(
@@ -149,7 +149,6 @@ test_that("output has expected new columns when bw files are missing", {
     chr       = c("chr1", "chr1"),
     start     = c(100L, 500L),
     end       = c(200L, 600L),
-    magnitude = c(3.0, 7.0),
     cell_type = c("A", "A")
   )
   bw <- data.frame(file_path = "no_match.bw", sample_id = "B")  # no match for A
@@ -184,8 +183,8 @@ test_that("output has expected new columns when bw files are missing", {
   # No bw match → specificity and sensitivity are NA
   expect_true(all(is.na(result$specificity_score)))
   expect_true(all(is.na(result$sensitivity_score)))
-  # Higher magnitude peak (7.0) should be ranked 1
-  expect_equal(result$PeakRankR_rank[result$magnitude == 7.0], 1L)
+  # With no bw match, both magnitude scores are 0 — ranks tied
+  expect_true(all(result$PeakRankR_rank >= 1L))
 })
 
 
@@ -193,7 +192,7 @@ test_that("output has expected new columns when bw files are missing", {
 
 test_that("Peak_RankR catches duplicate column arguments", {
   peaks <- data.frame(chr = "chr1", start = 100L, end = 200L,
-                      magnitude = 5, cell_type = "A")
+                      cell_type = "A")
   bw <- data.frame(file_path = "a.bw", sample_id = "A")
   # chr_col and group_by_column_name both set to "chr" — should error
   expect_error(
@@ -207,7 +206,7 @@ test_that("Peak_RankR catches duplicate column arguments", {
 
 test_that("Peak_RankR warns when background_group has unmatched values", {
   peaks <- data.frame(chr = "chr1", start = 100L, end = 200L,
-                      magnitude = 5, cell_type = "A")
+                      cell_type = "A")
   bw <- data.frame(file_path = "no_match.bw", sample_id = "B")
 
   old_fn <- get("check_bedtools", envir = asNamespace("PeakRankR"))

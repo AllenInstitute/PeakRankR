@@ -5,7 +5,7 @@
 ### Bug fixes
 - **Fixed hardcoded `"subclass"` column** (issue #7). The group column is now
   set via `group_by_column_name` (default `"cell_type"`), accepting any name.
-- **Fixed incorrect dependencies** (issue #5). `DESCRIPTION` now accurately declares only `bedtoolsr` as a hard dependency; previously unused Bioconductor packages (`GenomicRanges`, `IRanges`, `rtracklayer`) were incorrectly listed as required.
+- **Fixed dependencies** (issue #5). `DESCRIPTION` now accurately declares `rtracklayer`, `GenomicRanges`, `IRanges`, and `S4Vectors` as required imports. `bedtools` system binary is still needed for `check_bedtools()`.
 - **Added input validation** (issue #6). `Peak_RankR()` checks all required
   columns, weight validity, and non-empty inputs with clear error messages.
 
@@ -13,8 +13,6 @@
 - `check_bedtools()` — exported utility that verifies bedtools is accessible
   before running the pipeline, with install instructions if missing.
 - Flexible column names via `chr_col`, `start_col`, `end_col`, `magnitude_col`.
-- Replicate bigwig support — sensitivity averaged across all files per group.
-- `bt.map` no-overlap `"."` placeholder handled correctly (converted to 0).
 - Unit test suite via `testthat`.
 - Vignette: `vignettes/getting-started.Rmd`.
 

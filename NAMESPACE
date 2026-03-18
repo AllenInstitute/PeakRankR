@@ -2,4 +2,9 @@
 
 export(Peak_RankR)
 export(check_bedtools)
-importFrom(bedtoolsr, bt.map)
+importFrom(GenomicRanges,GRanges)
+importFrom(GenomicRanges,findOverlaps)
+importFrom(IRanges,IRanges)
+importFrom(S4Vectors,subjectHits)
+importFrom(S4Vectors,queryHits)
+importFrom(rtracklayer,import)

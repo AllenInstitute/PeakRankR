@@ -56,8 +56,8 @@
 #' )
 #' ranked <- Peak_RankR(
 #'   tsv_file_df          = tsv_file,
-#'   group_by_column_name = "cell_type",
-#'   background_group     = unique(tsv_file$cell_type),
+#'   group_by_column_name = "cell.population",
+#'   background_group     = unique(tsv_file$cell.population),
 #'   bw_table             = bw_table,
 #'   rank_sum             = TRUE,
 #'   weights              = c(1, 1, 1)
@@ -65,7 +65,6 @@
 #' head(ranked[order(ranked$PeakRankR_rank), ])
 #' }
 #'
-#' @importFrom bedtoolsr bt.map
 #' @export
 Peak_RankR <- function(tsv_file_df,
                         group_by_column_name = "cell_type",
@@ -233,7 +232,7 @@ Peak_RankR <- function(tsv_file_df,
   group_has_signal <- do.call(cbind, lapply(all_groups, function(grp) {
     bw_paths <- bw_table[bw_table$sample_id == grp, "file_path"]
     if (length(bw_paths) == 0) return(rep(0, n_peaks))
-    # Mean signal across replicates for this group
+    # Mean signal across bw files for this group
     grp_signal <- .get_mean_signal(target_df, bw_paths)
     as.numeric(grp_signal > 0)
   }))

@@ -36,12 +36,11 @@
 #'
 #' All three components are min-max normalised to [0, 1] before weighting.
 #'
-#' ## System requirement
-#'
-#' This package requires the `bedtools` binary on your system PATH:
-#' - Install: <https://bedtools.readthedocs.io>
-#' - R interface: `devtools::install_github("PhanstielLab/bedtoolsr")`
-#' - Set a custom path: `options(bedtools.path = "/path/to/bedtools/bin/")`
+#' ## Dependencies
+#' - Bigwig signal is read via `rtracklayer` (Bioconductor).
+#' - Genomic ranges are handled by `GenomicRanges`, `IRanges`, and `S4Vectors`.
+#' - The `bedtools` system binary is used by `check_bedtools()` to verify the
+#'   genomic toolchain. Install from <https://bedtools.readthedocs.io>.
 #'
 #' @keywords internal
 "_PACKAGE"

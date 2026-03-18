@@ -50,11 +50,12 @@ which bedtools   # macOS / Linux
 where bedtools   # Windows
 ```
 
-### 2. Install R dependencies
+### 2. Install Bioconductor dependencies
 
 ```r
-install.packages("devtools")
-devtools::install_github("PhanstielLab/bedtoolsr")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("rtracklayer", "GenomicRanges", "IRanges", "S4Vectors"))
 ```
 
 ### 3. Install PeakRankR
@@ -92,12 +93,10 @@ bw_table <- read.table(
 bw_table$file_path <- file.path(extdata_path, bw_table$file_path)
 
 # Run ranking
-# Note: only Astrocyte has bundled bigwig files — other groups will
-# rank by magnitude only. For full scoring, supply your own bigwig files.
 ranked <- Peak_RankR(
   tsv_file_df          = tsv_file,
-  group_by_column_name = "cell_type",
-  background_group     = unique(tsv_file$cell_type),
+  group_by_column_name = "cell.population",
+  background_group     = unique(tsv_file$cell.population),
   bw_table             = bw_table,
   rank_sum             = TRUE,
   weights              = c(1, 1, 1)
@@ -144,9 +143,8 @@ Two-column tab-separated file. `sample_id` must match values in your group colum
 
 ```
 file_path	sample_id
-/data/bw/Excitatory_rep1.bw	Excitatory
-/data/bw/Excitatory_rep2.bw	Excitatory
-/data/bw/Inhibitory_rep1.bw	Inhibitory
+/data/bw/Excitatory.bw	Excitatory
+/data/bw/Inhibitory.bw	Inhibitory
 ```
 
 One bigwig file per group. Each `sample_id` in your bw_table is treated as a distinct group.
@@ -168,7 +166,7 @@ One bigwig file per group. Each `sample_id` in your bw_table is treated as a dis
 | `chr_col` | `"chr"` | Chromosome column |
 | `start_col` | `"start"` | Start column |
 | `end_col` | `"end"` | End column |
-| `magnitude_col` | `"magnitude"` | Magnitude column |
+| `magnitude_col` | `NULL` | Magnitude column — if NULL, auto-computed from bigwig |
 
 ### `check_bedtools()`
 
@@ -186,4 +184,4 @@ Verifies the `bedtools` binary is accessible before running the pipeline.
 
 ## License
 
-BSD 2-Clause. See [LICENSE](LICENSE).
+Allen Institute Software License. See [LICENSE](LICENSE).

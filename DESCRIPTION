@@ -3,9 +3,11 @@ Title: Rank Enhancer Peaks for Cloning
 Version: 1.1.0
 Authors@R: c(
     person("Allen Institute", role = c("aut", "cph")),
-    person("Saroja", "Somasundaram", role = "aut"),
+    person("Saroja", "Somasundaram", role = "aut",
+           comment = c(ORCID = "0000-0002-3729-9849")),
     person("Nelson", "Johansen", role = c("aut", "cre"),
-           email = "nelsonj@alleninstitute.org")
+           email = "nelsonj@alleninstitute.org",
+           comment = c(ORCID = "0000-0002-4436-969X"))
   )
 Description: Prioritizes a list of enhancer peaks from different cell groups
     (e.g., cell types, subclasses) for experimental cloning and targeting.
@@ -22,16 +24,14 @@ RoxygenNote: 7.3.1
 Depends:
     R (>= 4.0.0)
 Imports:
-    bedtoolsr
+    rtracklayer,
+    GenomicRanges,
+    IRanges,
+    S4Vectors
 Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    rtracklayer,
-    GenomicRanges,
-    IRanges,
-    S4Vectors,
     BiocManager
-SystemRequirements: bedtools (>= 2.28.0) https://bedtools.readthedocs.io
 Config/testthat/edition: 3
 VignetteBuilder: knitr

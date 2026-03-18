@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 **PeakRankR** prioritises genomic enhancer peaks across cell groups for
 experimental cloning. Given:
 
-- a table of peak coordinates with group labels and signal magnitude, and
+- a table of peak coordinates with group labels (magnitude is optional — auto-computed from bigwig if omitted), and
 - a table pointing to bigwig files per group,
 
 it scores each peak on **specificity**, **sensitivity**, and **magnitude**,
@@ -46,8 +46,10 @@ All three components are min-max normalised to [0, 1] before weighting.
 #    Ubuntu:  sudo apt-get install bedtools
 #    Conda:   conda install -c bioconda bedtools
 
-# 2. bedtoolsr R interface
-devtools::install_github("PhanstielLab/bedtoolsr")
+# 2. Bioconductor dependencies
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("rtracklayer", "GenomicRanges", "IRanges", "S4Vectors"))
 
 # 3. PeakRankR
 devtools::install_github("AllenInstitute/PeakRankR", dependencies = TRUE)
@@ -70,8 +72,8 @@ check_bedtools()
 
 ### Step 2 — Load input files
 
-The **peak TSV** must have at minimum: chromosome, start, end, magnitude, and
-a group column. Column names are flexible — pass the actual names via function
+The **peak TSV** must have at minimum: chromosome, start, end, and a group column.
+Magnitude is optional — if not provided it is computed automatically from the bigwig signal. Column names are flexible — pass the actual names via function
 arguments.
 
 ```{r load_data}
@@ -98,8 +100,8 @@ bw_table$file_path <- file.path(extdata_path, bw_table$file_path)
 
 head(bw_table)
 #>                                                        file_path sample_id
-#> 1 /path/to/R/library/PeakRankR/extdata/Astrocytes-1.bw Astrocyte
-#> 2 /path/to/R/library/PeakRankR/extdata/Astrocytes-2.bw Astrocyte
+#> 1 /path/to/R/library/PeakRankR/extdata/Astrocytes-1.bw Astrocytes-1
+#> 2 /path/to/R/library/PeakRankR/extdata/Astrocytes-2.bw Astrocytes-2
 ```
 
 ### Step 3 — Run ranking

@@ -10,6 +10,7 @@ authors:
 date: 2025
 paperurl: https://github.com/AllenInstitute/PeakRankR
 doi: 10.5281/zenodo.15238528
+bibliography: paper.bib
 ---
 
 # PeakRankR: An R package for ranking enhancer peaks for cloning
@@ -47,8 +48,11 @@ Each weight defaults to 1 (equal importance) but is fully user-configurable.
   scores 0. Computed as: 1 - (groups_with_signal / total_groups).
 - **Magnitude**: Normalised mean bigwig signal level at the peak.
 
-Bigwig signal extraction is performed via `rtracklayer::import()`, which reads
-bigwig files directly without conversion. Final ranking uses either a rank-sum approach
+Bigwig signal extraction is performed via `rtracklayer::import()` [@Lawrence2013],
+which reads bigwig files directly without requiring format conversion.
+Genomic interval operations use the `GenomicRanges` [@Lawrence2013] and `IRanges`
+Bioconductor packages. The `bedtools` binary [@Quinlan2010] is used for verifying
+the genomic toolchain via `check_bedtools()`. Final ranking uses either a rank-sum approach
 (default) or direct composite score ordering.
 
 ## Features
@@ -63,8 +67,8 @@ bigwig files directly without conversion. Final ranking uses either a rank-sum a
 ## Installation
 
 ```r
-# Install bedtoolsr R interface
-devtools::install_github("PhanstielLab/bedtoolsr")
+# Install Bioconductor dependencies
+BiocManager::install(c("rtracklayer", "GenomicRanges", "IRanges", "S4Vectors"))
 
 # Install PeakRankR
 devtools::install_github("AllenInstitute/PeakRankR", dependencies = TRUE)
@@ -80,8 +84,8 @@ bw_table  <- read.table("bw_table.txt",  header = TRUE, sep = "\t")
 
 ranked <- Peak_RankR(
   tsv_file_df          = tsv_file,
-  group_by_column_name = "cell_type",
-  background_group     = unique(tsv_file$cell_type),
+  group_by_column_name = "cell.population",
+  background_group     = unique(tsv_file$cell.population),
   bw_table             = bw_table,
   rank_sum             = TRUE,
   weights              = c(1, 1, 1)
@@ -95,3 +99,5 @@ If you use PeakRankR in your research, please cite:
 > Allen Institute. *PeakRankR: Package to rank enhancer peaks for cloning.*
 > https://github.com/AllenInstitute/PeakRankR
 > DOI: 10.5281/zenodo.15238528
+
+# References
