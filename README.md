@@ -1,73 +1,189 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15238528.svg)](https://doi.org/10.5281/zenodo.15238528)
-
 # PeakRankR
 
-The R Package can be used to prioritize a list of enahncers/peaks from different groups (e.g. celltypes, subclasses) for cloning and targeting the group of interest. It takes in tsv file with coordinates, group and magnitude (at bare minimum) and two column file (refer below table for sample) listing the bigwig file path and sample id as input and returns the same tsv file with peak ranks calculated per group as output
+> **Rank enhancer peaks for cloning** — an R package from the [Allen Institute](https://alleninstitute.org)
 
-## Required tools to install and run PeakRankR
+[![License](https://img.shields.io/badge/License-Allen_Institute-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15238528.svg)](https://doi.org/10.5281/zenodo.15238528)
+
+PeakRankR scores and ranks genomic enhancer peaks across user-defined cell groups (e.g. cell types, subclasses, clusters) to prioritise candidates for experimental cloning and in-vivo targeting.
+
+---
+
+## How it works
+
+Each peak receives a composite score from three normalised components:
 
 ```
-# Identiy location of bedtools using:
-system("which bedtools")
-# If not installed please install bedtools using https://bedtools.readthedocs.io/en/latest/content/installation.html#
-options(bedtools.path = "/path/to/")
+PeakRankR_score = W(specificity) × Specificity
+              + W(sensitivity) × Sensitivity
+              + W(magnitude)   × Magnitude
+```
 
-# bedtoolsr installation 
+| Component | Definition |
+|---|---|
+| **Specificity** | Normalised ratio of target-group signal to mean background signal |
+| **Sensitivity** | Fraction of target-group samples with signal > 0 at the peak |
+| **Magnitude** | Normalised mean signal level |
+
+All three components are min-max normalised to [0, 1] before weighting. By default each weight is 1 (equal importance).
+
+---
+
+## Installation
+
+### 1. Install system dependency: bedtools
+
+```bash
+# macOS (Homebrew)
+brew install bedtools
+
+# Ubuntu / Debian
+sudo apt-get install bedtools
+
+# Conda
+conda install -c bioconda bedtools
+```
+
+Verify installation:
+```bash
+which bedtools   # macOS / Linux
+where bedtools   # Windows
+```
+
+### 2. Install R dependencies
+
+```r
 install.packages("devtools")
-library(devtools)
 devtools::install_github("PhanstielLab/bedtoolsr")
-
 ```
-## Installation of PeakRanR
 
+### 3. Install PeakRankR
+
+```r
+devtools::install_github("AllenInstitute/PeakRankR", dependencies = TRUE)
 ```
-devtools::install_github("AllenInstitute/PeakRankR", dependencies = T)
+
+---
+
+## Quick Start
+
+```r
 library(PeakRankR)
 
+# Optional: set bedtools path if not on system PATH
+# options(bedtools.path = "/usr/local/bin/")
+
+# Verify bedtools is accessible
+check_bedtools()
+
+# Load the built-in example files
+tsv_file <- read.table(
+  system.file("extdata", "test_file.tsv", package = "PeakRankR"),
+  header = TRUE, sep = "\t"
+)
+
+# Build bw_table using the bundled bigwig files
+extdata_path <- system.file("extdata", package = "PeakRankR")
+bw_table <- read.table(
+  file.path(extdata_path, "bw_table.txt"),
+  header = TRUE, sep = "\t"
+)
+# Resolve filenames to full paths
+bw_table$file_path <- file.path(extdata_path, bw_table$file_path)
+
+# Run ranking
+# Note: only Astrocyte has bundled bigwig files — other groups will
+# rank by magnitude only. For full scoring, supply your own bigwig files.
+ranked <- Peak_RankR(
+  tsv_file_df          = tsv_file,
+  group_by_column_name = "cell_type",
+  background_group     = unique(tsv_file$cell_type),
+  bw_table             = bw_table,
+  rank_sum             = TRUE,
+  weights              = c(1, 1, 1)
+)
+
+head(ranked[order(ranked$PeakRankR_rank), ])
 ```
 
+---
 
-## PeakRankR Algorithm
+## Input file formats
 
-PeakRankRscore  =  W(specificity)SpecificityPeak +
-      	           W(sensitivity)SensitivityPeak +	 
-      		   W(magnitude)MagnitudePeak
+### Peak TSV (`tsv_file_df`)
 
+Tab-separated. Required columns (names are configurable via function arguments):
 
-where W stands for the weight of each feature. By default each weight variable is set to 1 indicating equal importance for all three features
+| Column | Default arg | Default name | Description |
+|---|---|---|---|
+| Chromosome | `chr_col` | `chr` | e.g. `chr1` |
+| Start | `start_col` | `start` | 0-based start coordinate |
+| End | `end_col` | `end` | End coordinate |
+| Magnitude | `magnitude_col` | `magnitude` | Signal strength / fold-change |
+| Group | `group_by_column_name` | `cell_type` | Cell type or group label |
 
-## Running PeakRankR
-
+Example using the default column names:
 ```
-tsv_file <- read.table("test_file.tsv",header=TRUE)  # input peaks file with coordinates only/and group name (cell.population) columns (example: test_file.tsv)
-bw_table <- read.table("bw_table.txt",header=TRUE) # path to bigwig table (example: bw_table)
-
-
-# If group name is given:
-
-Ranked_peaks_file <- Peak_RankeR(tsv_file_df         = tsv_file,
-				group_by_column_name = "cell.population",
-				background_group     = unique(tsv_file$"cell.population"),
-				bw_table             = bw_table, 
-				rank_sum             = TRUE,
-				weights              = c(1,1,1))
-
+chr	start	end	magnitude	cell_type
+chr1	1000000	1001000	8.32	Excitatory
+chr1	2000000	2001500	5.10	Inhibitory
 ```
 
+If your data uses different column names (e.g. `"subclass"`, `"peak.magnitude"`):
+```r
+Peak_RankR(
+  tsv_file_df          = my_peaks,
+  group_by_column_name = "subclass",
+  magnitude_col        = "peak.magnitude"
+)
+```
 
-### Note: 
+### Bigwig table (`bw_table`)
 
-1. In the bw_table file, the sample_id column should match the group_by_column_name values
+Two-column tab-separated file. `sample_id` must match values in your group column.
 
-2. All arguments to the function are mandatory
+```
+file_path	sample_id
+/data/bw/Excitatory_rep1.bw	Excitatory
+/data/bw/Excitatory_rep2.bw	Excitatory
+/data/bw/Inhibitory_rep1.bw	Inhibitory
+```
 
-       
+Multiple bigwig files per group (replicates) are supported.
+
+---
+
+## Function reference
+
+### `Peak_RankR()`
+
+| Argument | Default | Description |
+|---|---|---|
+| `tsv_file_df` | — | Peak data frame |
+| `group_by_column_name` | `"cell_type"` | Group column name |
+| `background_group` | all groups | Specificity background |
+| `bw_table` | — | Bigwig path table |
+| `rank_sum` | `TRUE` | Rank by rank-sum vs composite score |
+| `weights` | `c(1,1,1)` | Weights: specificity, sensitivity, magnitude |
+| `chr_col` | `"chr"` | Chromosome column |
+| `start_col` | `"start"` | Start column |
+| `end_col` | `"end"` | End column |
+| `magnitude_col` | `"magnitude"` | Magnitude column |
+
+### `check_bedtools()`
+
+Verifies the `bedtools` binary is accessible before running the pipeline.
+
+---
+
+## Citation
+
+> Allen Institute. *PeakRankR: Package to rank enhancer peaks for cloning.*  
+> https://github.com/AllenInstitute/PeakRankR  
+> DOI: [10.5281/zenodo.15238528](https://doi.org/10.5281/zenodo.15238528)
+
+---
+
 ## License
-The license for this package is available on Github at: https://github.com/AllenInstitute/PeakRankR/blob/master/LICENSE
 
-## Level of Support
-We are planning on occasionally updating this repo with no fixed schedule, but likely several times per year. Community involvement is encouraged through both issues and pull requests. 
-
-        
-
-        
+BSD 2-Clause. See [LICENSE](LICENSE).

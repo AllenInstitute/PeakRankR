@@ -1,22 +1,37 @@
 Package: PeakRankR
-Title: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
-Version: 0.0.0.9000
-Authors@R: 
-    person(given = "Saroja",
-           family = "Somasundaram",
-           role = c("aut", "cre"),
-           email = "sarojas@alleninstitute.org")
-URL: https://github.com/
-Description: PeakRankR takes enhancer peaks and ranks them for each cell type based on few optimum features
-License: GPL-3
-Imports: 
-    bedtoolsr,
-    dplyr,
-    tidyr,
-    BiocParallel
-Remotes:
-    Bioconductor/BiocParallel
+Title: Rank Enhancer Peaks for Cloning
+Version: 1.1.0
+Authors@R: c(
+    person("Allen Institute", role = c("aut", "cph")),
+    person("Saroja", "Somasundaram", role = "aut"),
+    person("Nelson", "Johansen", role = c("aut", "cre"),
+           email = "nelsonj@alleninstitute.org")
+  )
+Description: Prioritizes a list of enhancer peaks from different cell groups
+    (e.g., cell types, subclasses) for experimental cloning and targeting.
+    Given a TSV file with genomic coordinates, group labels, and signal
+    magnitude, along with a table of bigwig file paths, the package scores
+    each peak on specificity, sensitivity, and magnitude, then returns a
+    ranked list per group.
+License: file LICENSE
+URL: https://github.com/AllenInstitute/PeakRankR
+BugReports: https://github.com/AllenInstitute/PeakRankR/issues
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
+Depends:
+    R (>= 4.0.0)
+Imports:
+    bedtoolsr
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    rtracklayer,
+    GenomicRanges,
+    IRanges,
+    S4Vectors,
+    BiocManager
+SystemRequirements: bedtools (>= 2.28.0) https://bedtools.readthedocs.io
+Config/testthat/edition: 3
+VignetteBuilder: knitr

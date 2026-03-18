@@ -1,47 +1,97 @@
 ---
-title: "PeakRankR: A tool for ranking and visualizing genomic regions"
+title: "PeakRankR: An R package for ranking enhancer peaks for cloning"
 authors:
   - name: Saroja Somasundaram
-    orcid: Your ORCID
+    orcid: 0000-0000-0000-0000
     affiliation: Allen Institute
-date: 2025-05-07
+  - name: Nelson Johansen
+    orcid: 0000-0000-0000-0000
+    affiliation: Allen Institute
+date: 2025
 paperurl: https://github.com/AllenInstitute/PeakRankR
-journal: Journal of Open Source Software
-volume: XX
-issue: YY
-pages: ZZ-ZZ
-doi: 10.21105/joss.XXXXX  # replace with the actual DOI when available
+doi: 10.5281/zenodo.15238528
 ---
 
-# PeakRankR: A tool for ranking genomic regions
+# PeakRankR: An R package for ranking enhancer peaks for cloning
 
-**PeakRankR** is an R package developed to assist genomics researchers in efficiently ranking genomic regions, such as enhancers, based on metrics derived from sequencing data such as scATAC-seq (single-cell Assay for Transposase-Accessible Chromatin with sequencing). The package facilitates the analysis of peak data by offering a suite of feature extraction scripts that enable ranking and prioritization of enhancers for specific cell types or subclasses.
+**PeakRankR** is an R package developed to assist genomics researchers in
+efficiently ranking genomic enhancer peaks for experimental cloning and
+in-vivo targeting. Given single-cell ATAC-seq (scATAC-seq) peak data across
+cell groups (e.g. cell types, subclasses), the package scores and ranks each
+peak to identify the best candidates for targeting a specific group.
 
-**PeakRankR** is quick and easy to run, making it accessible to researchers with varying levels of R experience. It derives a variety of informative features from genomic peak data conveniently using R, allowing for streamlined integration into existing analysis pipelines. At its core, the tool applies a linear model to score and rank peaks using user-defined weights applied to the extracted features. This flexible design lets users tailor the ranking process to their specific needs, although the default configuration has been shown to work well across several datasets.
-
-The effectiveness of the default settings was validated in the study *"Evaluating Methods for the Prediction of Cell Type-Specific Enhancers in the Mammalian Cortex"*, where **PeakRankR** demonstrated strong performance in identifying relevant enhancers. By combining usability with analytical rigor, **PeakRankR** helps researchers identify candidate regulatory elements efficiently in complex, large-scale single-cell datasets.
+**PeakRankR** is quick and easy to run, making it accessible to researchers
+with varying levels of R experience. It integrates directly into existing R
+analysis pipelines and requires only a peak TSV file with group labels and a
+table of bigwig file paths as input.
 
 ## Methods
 
-To be written 
+PeakRankR computes a composite score for each peak per group using three
+normalised components:
+
+$$
+\text{Score} = W_{\text{spec}} \times \text{Specificity}
+             + W_{\text{sens}} \times \text{Sensitivity}
+             + W_{\text{mag}}  \times \text{Magnitude}
+$$
+
+All three components are min-max normalised to [0, 1] before weighting.
+Each weight defaults to 1 (equal importance) but is fully user-configurable.
+
+- **Specificity**: Normalised ratio of the target group's mean bigwig signal
+  to the mean signal across all background groups. Higher values indicate the
+  peak is more active in the target group than in others.
+- **Sensitivity**: Fraction of target-group bigwig files (samples/replicates)
+  where the peak has signal > 0. Higher values indicate the peak is
+  consistently active across replicates.
+- **Magnitude**: Normalised mean bigwig signal level at the peak.
+
+Bigwig signal extraction is performed via `bedtoolsr::bt.map`, which wraps
+the `bedtools map` command. Final ranking uses either a rank-sum approach
+(default) or direct composite score ordering.
 
 ## Features
 
-
-### Features
-
-- **MACS2 Rank**: Ranks genomic peaks based on the –log10(p-value) assigned by the peak caller MACS2, reflecting peak significance in the original data.
-- **Intersection Rank**: Ranks peaks based on their specificity by calculating how often a peak overlaps with peaks from other cell types. Peaks unique to a given cell type are ranked higher.
-- **Coverage Rank**: Ranks peaks by their normalized read coverage within a specific cell type relative to others. Peaks with disproportionately high coverage in one cell type receive higher ranks.
+- Flexible group column — works with any column name (cell type, subclass,
+  cluster, etc.), not just hardcoded names.
+- Multiple bigwig replicates per group are supported and averaged.
+- User-configurable weights for specificity, sensitivity, and magnitude.
+- Input validation with clear, actionable error messages.
+- `check_bedtools()` utility to verify the system dependency before running.
 
 ## Installation
 
-PeakRankR is available from GitHub and can be installed using the `devtools` package in R:
+```r
+# Install bedtoolsr R interface
+devtools::install_github("PhanstielLab/bedtoolsr")
+
+# Install PeakRankR
+devtools::install_github("AllenInstitute/PeakRankR", dependencies = TRUE)
+```
+
+## Usage
 
 ```r
-# Install the devtools package if not already installed
-install.packages("devtools")
+library(PeakRankR)
 
-# Install PeakRankR from GitHub
-devtools::install_github("AllenInstitute/PeakRankR")
+tsv_file <- read.table("test_file.tsv", header = TRUE, sep = "\t")
+bw_table  <- read.table("bw_table.txt",  header = TRUE, sep = "\t")
 
+ranked <- Peak_RankR(
+  tsv_file_df          = tsv_file,
+  group_by_column_name = "cell_type",
+  background_group     = unique(tsv_file$cell_type),
+  bw_table             = bw_table,
+  rank_sum             = TRUE,
+  weights              = c(1, 1, 1)
+)
+```
+
+## Citation
+
+If you use PeakRankR in your research, please cite:
+
+> Allen Institute. *PeakRankR: Package to rank enhancer peaks for cloning.*
+> https://github.com/AllenInstitute/PeakRankR
+> DOI: 10.5281/zenodo.15238528

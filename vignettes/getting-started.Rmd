@@ -1,0 +1,174 @@
+---
+title: "Getting Started with PeakRankR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with PeakRankR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  eval      = FALSE   # bigwig files not available in vignette build
+)
+```
+
+## Overview
+
+**PeakRankR** prioritises genomic enhancer peaks across cell groups for
+experimental cloning. Given:
+
+- a table of peak coordinates with group labels and signal magnitude, and
+- a table pointing to bigwig files per group,
+
+it scores each peak on **specificity**, **sensitivity**, and **magnitude**,
+then returns the peaks ranked within each group.
+
+### Scoring formula
+
+$$
+\text{Score} = W_{\text{spec}} \times \text{Specificity}
+             + W_{\text{sens}} \times \text{Sensitivity}
+             + W_{\text{mag}}  \times \text{Magnitude}
+$$
+
+All three components are min-max normalised to [0, 1] before weighting.
+
+---
+
+## Installation
+
+```r
+# 1. System dependency — bedtools
+#    macOS:   brew install bedtools
+#    Ubuntu:  sudo apt-get install bedtools
+#    Conda:   conda install -c bioconda bedtools
+
+# 2. bedtoolsr R interface
+devtools::install_github("PhanstielLab/bedtoolsr")
+
+# 3. PeakRankR
+devtools::install_github("AllenInstitute/PeakRankR", dependencies = TRUE)
+```
+
+---
+
+## Quick start
+
+```{r load}
+library(PeakRankR)
+```
+
+### Step 1 — Verify bedtools
+
+```{r check_bedtools}
+# Auto-detect on PATH, or set: options(bedtools.path = "/usr/local/bin/")
+check_bedtools()
+```
+
+### Step 2 — Load input files
+
+The **peak TSV** must have at minimum: chromosome, start, end, magnitude, and
+a group column. Column names are flexible — pass the actual names via function
+arguments.
+
+```{r load_data}
+# Built-in example files
+tsv_path <- system.file("extdata", "test_file.tsv", package = "PeakRankR")
+bw_path  <- system.file("extdata", "bw_table.txt",  package = "PeakRankR")
+
+peaks    <- read.table(tsv_path, header = TRUE, sep = "\t")
+bw_table <- read.table(bw_path,  header = TRUE, sep = "\t")
+
+head(peaks)
+#>    chr   start     end magnitude  cell_type
+#> 1 chr1 1000000 1001000      8.32 Excitatory
+#> 2 chr1 2000000 2001500      5.10 Inhibitory
+```
+
+The **bigwig table** must have exactly two columns: `file_path` and `sample_id`.
+The `sample_id` values must match values in your group column.
+
+```{r bw_table}
+# Resolve the bundled bigwig filenames to full installed paths
+extdata_path <- system.file("extdata", package = "PeakRankR")
+bw_table$file_path <- file.path(extdata_path, bw_table$file_path)
+
+head(bw_table)
+#>                                                        file_path sample_id
+#> 1 /path/to/R/library/PeakRankR/extdata/Astrocytes-1.bw Astrocyte
+#> 2 /path/to/R/library/PeakRankR/extdata/Astrocytes-2.bw Astrocyte
+```
+
+### Step 3 — Run ranking
+
+```{r rank}
+ranked <- Peak_RankR(
+  tsv_file_df          = peaks,
+  group_by_column_name = "cell_type",            # column in peaks
+  background_group     = unique(peaks$cell_type), # all groups as background
+  bw_table             = bw_table,
+  rank_sum             = TRUE,
+  weights              = c(1, 1, 1)               # equal weights
+)
+
+# View top-ranked peaks per group
+ranked[order(ranked$PeakRankR_rank), ]
+```
+
+---
+
+## Custom column names
+
+If your data uses different column names, specify them:
+
+```{r custom_cols}
+ranked <- Peak_RankR(
+  tsv_file_df          = my_peaks,
+  group_by_column_name = "subclass",   # your group column
+  bw_table             = bw_table,
+  chr_col              = "chrom",
+  start_col            = "chromStart",
+  end_col              = "chromEnd",
+  magnitude_col        = "fold_change"
+)
+```
+
+---
+
+## Adjusting weights
+
+To prioritise specificity over the other features:
+
+```{r weights}
+ranked_specific <- Peak_RankR(
+  tsv_file_df          = peaks,
+  group_by_column_name = "cell_type",
+  bw_table             = bw_table,
+  weights              = c(3, 1, 1)   # specificity weight tripled
+)
+```
+
+---
+
+## Output columns
+
+`Peak_RankR()` returns the input data frame with five new columns appended:
+
+| Column | Description |
+|---|---|
+| `specificity_score` | Normalised ratio of target signal to background |
+| `sensitivity_score` | Fraction of groups with NO signal at this peak — higher means fewer groups share this peak |
+| `magnitude_score` | Normalised mean signal level |
+| `PeakRankR_score` | Weighted composite score |
+| `PeakRankR_rank` | Rank within the group (1 = best candidate) |
+
+---
+
+## Session info
+
+```{r session}
+sessionInfo()
+```

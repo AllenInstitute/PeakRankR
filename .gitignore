@@ -1,0 +1,30 @@
+# R build artefacts
+*.Rproj.user
+*.Rhistory
+*.RData
+*.Ruserdata
+.Rproj.user/
+*.tar.gz
+
+# R CMD check output
+/*.Rcheck/
+/doc/
+/Meta/
+/inst/doc/
+
+# Test artefacts
+tests/testthat/Rplots.pdf
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp files
+*.tmp
+*.bak
+~$*
+
+# Do NOT ignore inst/extdata — bundled example data shipped with package
+!inst/extdata/
+!inst/extdata/*.bw

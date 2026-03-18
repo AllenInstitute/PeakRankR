@@ -1,0 +1,3 @@
+file_path	sample_id
+Astrocytes-1.bw	Astrocytes-1
+Astrocytes-2.bw	Astrocytes-2
