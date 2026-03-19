@@ -39,8 +39,8 @@ dependencies = [
 pypeakranker = "pypeakranker.cli:main"
 
 [project.urls]
-Repository = "https://github.com/AllenInstitute/PyPeakRankR"
-"Bug Tracker" = "https://github.com/AllenInstitute/PyPeakRankR/issues"
+Repository = "https://github.com/AllenInstitute/PeakRankR/tree/python-package"
+"Bug Tracker" = "https://github.com/AllenInstitute/PeakRankR/issues"
 
 [project.optional-dependencies]
 test = ["pytest"]

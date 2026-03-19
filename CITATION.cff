@@ -1,23 +1,32 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "PyPeakRanker: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking"
+title: "PyPeakRankR: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking"
 version: 0.1.0
+doi: 10.5281/zenodo.15238527
 date-released: "2026-02-26"
 license: MIT
-repository-code: https://github.com/AllenInstitute/PyPeakRankR
+repository-code: https://github.com/AllenInstitute/PeakRankR/tree/python-package
 authors:
   - family-names: Somasundaram
     given-names: Saroja
     orcid: https://orcid.org/0000-0002-3729-9849
     affiliation: Allen Institute for Brain Science
+  - family-names: Johansen
+    given-names: Nelson J.
+    orcid: https://orcid.org/0000-0002-4436-969X
+    affiliation: Allen Institute for Brain Science
 preferred-citation:
   type: article
-  title: "PyPeakRanker: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking"
+  title: "PyPeakRankR: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking"
   authors:
     - family-names: Somasundaram
       given-names: Saroja
       orcid: https://orcid.org/0000-0002-3729-9849
+    - family-names: Johansen
+      given-names: Nelson J.
+      orcid: https://orcid.org/0000-0002-4436-969X
   journal: "Journal of Open Source Software"
   year: 2026
-  url: https://github.com/AllenInstitute/PyPeakRankR
+  doi: 10.5281/zenodo.15238527
+  url: https://github.com/AllenInstitute/PeakRankR/tree/python-package

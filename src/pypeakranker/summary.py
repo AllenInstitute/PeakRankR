@@ -45,7 +45,7 @@ def load_peaks(peaks_path: str, quiet: bool = False) -> pd.DataFrame:
     df.columns = cols
 
     df["start"] = pd.to_numeric(df["start"], errors="coerce")
-    df["end"]   = pd.to_numeric(df["end"],   errors="coerce")
+    df["end"] = pd.to_numeric(df["end"], errors="coerce")
     before = len(df)
     df = df.dropna(subset=["start", "end"]).copy()
     dropped = before - len(df)
@@ -185,9 +185,6 @@ def add_signal(
     log(f"Wrote table with signal columns: {out_tsv}", quiet)
 
 
-# -------------------------
-# Standalone script CLI
-# -------------------------
 
 def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], pattern: str) -> List[str]:
     if bigwig_files:
@@ -204,6 +201,9 @@ def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], 
         raise FileNotFoundError("No BigWig files found. Check --bigwig-dir/--bigwig-files and --pattern.")
     return files
 
+# -------------------------
+# Standalone script CLI
+# -------------------------
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
