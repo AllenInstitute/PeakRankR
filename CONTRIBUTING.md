@@ -1,10 +1,10 @@
-# Contributing to PyPeakRanker
+# Contributing to PyPeakRankR
 
 Thank you for your interest in contributing!
 
 ## Reporting issues
 
-Please use the [GitHub issue tracker](https://github.com/AllenInstitute/PyPeakRankR/issues).
+Please use the [GitHub issue tracker](https://github.com/AllenInstitute/PeakRankR/issues).
 Include:
 - A minimal reproducible example
 - Your Python version and OS
@@ -13,8 +13,8 @@ Include:
 ## Development setup
 
 ```bash
-git clone https://github.com/AllenInstitute/PyPeakRankR
-cd PyPeakRankR
+git clone -b python-package https://github.com/AllenInstitute/PeakRankR
+cd PeakRankR
 pip install -e ".[dev]"
 ```
 

@@ -1,15 +1,15 @@
-# PyPeakRanker
+# PyPeakRankR
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
-**PyPeakRanker** is a Python package for extracting quantitative features from
+**PyPeakRankR** is a Python package for extracting quantitative features from
 a predefined set of genomic peaks and assembling them into a reproducible,
 analysis-ready feature table.
 
 It generates a standardized **peak × feature matrix** enabling systematic
 ranking and comparison of regulatory elements across cell types, conditions,
-or species. PyPeakRanker does **not perform peak calling** — it standardizes
+or species. PyPeakRankR does **not perform peak calling** — it standardizes
 feature extraction so that downstream prioritization can be performed
 reproducibly using any statistical or machine-learning approach.
 
@@ -38,14 +38,14 @@ reproducibly using any statistical or machine-learning approach.
 ### Install from GitHub
 
 ```bash
-pip install git+https://github.com/AllenInstitute/PyPeakRankR.git
+pip install git+https://github.com/AllenInstitute/PeakRankR.git@python-package
 ```
 
 ### Install from source
 
 ```bash
-git clone https://github.com/AllenInstitute/PyPeakRankR
-cd PyPeakRankR
+git clone -b python-package https://github.com/AllenInstitute/PeakRankR
+cd PeakRankR
 pip install -e .
 ```
 
@@ -153,7 +153,7 @@ pytest tests/
 
 ## Design Philosophy
 
-PyPeakRanker separates **feature extraction** (deterministic, standardized)
+PyPeakRankR separates **feature extraction** (deterministic, standardized)
 from **peak ranking** (user-defined, flexible). This ensures ranking logic
 remains transparent and adaptable to specific biological questions.
 
@@ -162,30 +162,32 @@ remains transparent and adaptable to specific biological questions.
 
 ## Used in
 
-PyPeakRanker was used in the following published studies:
+PyPeakRankR was used in the following published studies:
 
 - **Johansen et al. (2025)** — [Evaluating methods for the prediction of cell-type-specific enhancers in the mammalian cortex](https://doi.org/10.1016/j.xgen.2025.100879). *Cell Genomics.*
   PeakRankR ranked among the top 3 methods in the BICCN community challenge across 16 competing methods.
 
 - **Wirthlin et al. (2026)** — [A Cross-Species Enhancer-AAV Toolkit for Cell Type-Specific Targeting Across the Basal Ganglia](https://doi.org/10.64898/2026.02.23.706695). *bioRxiv.*
-  PyPeakRanker was used in the Cross-species Enhancer Ranking Pipeline (CERP) to compute ATAC specificity, PhyloP conservation, GC content, signal moments, and composite rankings for 514 candidate enhancers across basal ganglia cell types in mouse and macaque.
+  PyPeakRankR was used in the Cross-species Enhancer Ranking Pipeline (CERP) to compute ATAC specificity, PhyloP conservation, GC content, signal moments, and composite rankings for 514 candidate enhancers across basal ganglia cell types in mouse and macaque.
 
 ---
 
 ## Citation
 
-If you use PyPeakRanker in your research, please cite:
+If you use PyPeakRankR in your research, please cite:
 
-> Somasundaram, S. (2026). PyPeakRanker: Reproducible Peak-Level Feature
-> Extraction for Regulatory Element Ranking.
+> Somasundaram, S. and Johansen, N.J. (2026). PyPeakRankR: Reproducible Peak-Level
+> Feature Extraction for Regulatory Element Ranking.
 > *Journal of Open Source Software*.
-> https://github.com/AllenInstitute/PyPeakRankR
+> https://github.com/AllenInstitute/PeakRankR/tree/python-package
 
 ---
 
-## Author
+## Authors
 
 Saroja Somasundaram — Allen Institute for Brain Science
+
+Nelson J. Johansen — Allen Institute for Brain Science
 
 ## License
 

@@ -71,7 +71,7 @@ heterogeneous input tracks — which is precisely what PyPeakRankR addresses.
 # State of the field
 
 Several tools perform individual aspects of peak-level feature computation.
-`pyBigWig` [@Ramírez2016] provides low-level BigWig access but no peak-level
+`pyBigWig` [@Ramirez2020pyBigWig] provides low-level BigWig access but no peak-level
 aggregation framework. `deepTools` [@Ramírez2016] computes matrix summaries but
 is oriented toward visualization rather than tabular feature assembly. ArchR
 [@Corces2018] computes cell-type specificity scores within its own data model
@@ -149,13 +149,15 @@ accessibility across cell types. This divergence illustrates why fold-change
 alone is insufficient for selecting cell-type specific regulatory elements.
 
 ![Comparison of MACS2 fold-change ranking (left) versus PyPeakRankR
-specificity ranking (right) for ten ATAC-seq peaks. Peaks with the highest
-MACS2 fold-change are not necessarily the most cell-type specific. P1 (chr4,
-red border, left) ranks last by fold-change but first by specificity. P3
-(chr1) and P10 (chr10) rank highly by fold-change but show low specificity
-scores, consistent with broad activity across cell types. PyPeakRankR
-specificity scores are normalised to [0, 1]; rank 1 indicates the peak most
-exclusively active in the target
+specificity ranking (right) for ten MACS2 narrowPeak calls from a real
+ATAC-seq experiment (test.bed). Peaks with the highest MACS2 fold-change
+are not necessarily the most cell-type specific. P1 (chr4, green border)
+ranks last by fold-change (FC = 11.7) but first by specificity. P3 (chr1)
+and P10 (chr10) rank first and second by fold-change (FC = 17.0 and 17.4)
+but near the bottom by specificity, consistent with broad chromatin
+accessibility across cell types. Specificity scores are the ratio of target
+to mean background ATAC signal, min-max normalised to [0, 1]; rank 1 is
+the peak most exclusively active in the target
 group.](browser_tracks_comparison.png)
 
 # Research impact statement
@@ -186,7 +188,7 @@ regions. The software is openly available and documented for community reuse.
 
 PyPeakRankR is implemented in Python (>=3.9) with the following dependencies:
 `pandas` [@Reback2020] for tabular data handling, `numpy` [@Harris2020] for
-numerical computation, `pyBigWig` [@Ramírez2016] for BigWig signal extraction,
+numerical computation, `pyBigWig` [@Ramirez2020pyBigWig] for BigWig signal extraction,
 `pyfaidx` [@Shirley2015] for FASTA sequence access, and `scipy` [@Virtanen2020]
 for statistical distribution metrics. The package is installable via pip from
 GitHub, provides a `pypeakranker` CLI entry point, and includes unit tests
