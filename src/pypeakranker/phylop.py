@@ -35,6 +35,11 @@ import pandas as pd
 import pyBigWig
 
 
+
+# -------------------------
+# Shared helpers
+# -------------------------
+
 def log(msg: str, quiet: bool) -> None:
     if not quiet:
         print(msg, flush=True)
@@ -58,7 +63,7 @@ def load_peaks(peaks_path: str, quiet: bool = False) -> pd.DataFrame:
     df.columns = cols
 
     df["start"] = pd.to_numeric(df["start"], errors="coerce")
-    df["end"] = pd.to_numeric(df["end"], errors="coerce")
+    df["end"]   = pd.to_numeric(df["end"],   errors="coerce")
     before = len(df)
     df = df.dropna(subset=["start", "end"]).copy()
     dropped = before - len(df)

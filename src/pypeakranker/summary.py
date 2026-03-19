@@ -45,7 +45,7 @@ def load_peaks(peaks_path: str, quiet: bool = False) -> pd.DataFrame:
     df.columns = cols
 
     df["start"] = pd.to_numeric(df["start"], errors="coerce")
-    df["end"] = pd.to_numeric(df["end"], errors="coerce")
+    df["end"]   = pd.to_numeric(df["end"],   errors="coerce")
     before = len(df)
     df = df.dropna(subset=["start", "end"]).copy()
     dropped = before - len(df)
@@ -193,7 +193,8 @@ def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], 
     if bigwig_files:
         files = list(bigwig_files)
     else:
-        assert bigwig_dir is not None
+        if bigwig_dir is None:
+        raise ValueError("Provide exactly one of --bigwig-dir or --bigwig-files")
         patterns = [p.strip() for p in pattern.split(",") if p.strip()]
         files = []
         for pat in patterns:
@@ -203,9 +204,6 @@ def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], 
         raise FileNotFoundError("No BigWig files found. Check --bigwig-dir/--bigwig-files and --pattern.")
     return files
 
-# -------------------------
-# Standalone script CLI
-# -------------------------
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
