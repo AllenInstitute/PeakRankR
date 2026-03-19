@@ -173,12 +173,11 @@ ranking identifies functional enhancers at a level competitive with sequence
 deep learning models.
 
 In the companion basal ganglia study [@Wirthlin2026], PyPeakRankR was used
-within the Cross-species Enhancer Ranking Pipeline (CERP) to compute composite
-rankings for 514 candidate enhancers spanning the striatum, pallidum, subthalamic
-nucleus, and dopaminergic midbrain in mouse and macaque. The composite feature
-rankings outperformed conventional fold-change approaches, and the resulting
-enhancer-AAV tools achieved >70% on-target specificity across cell types, with
-exemplary enhancers exceeding 90%.
+within the Cross-species Enhancer Ranking Pipeline (CERP) across multiple
+BG cell types in mouse and macaque. The composite feature rankings
+outperformed conventional fold-change approaches, and the resulting
+enhancer-AAV tools achieved >70% on-target specificity across cell types,
+with exemplary enhancers exceeding 90%.
 
 These applications demonstrate that PyPeakRankR's feature extraction produces
 rankings with direct experimental utility, spanning multiple species and brain

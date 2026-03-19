@@ -11,6 +11,8 @@ Package API:
 Standalone peaks -> moments table:
 python -m pypeakranker.moments --peaks ... --bigwig-dir ... --output ...
 
+Author: Saroja Somasundaram
+Refactor: 2026-02 (table mode + peaks mode, CLI args, no hard-coded paths)
 """
 
 from __future__ import annotations
@@ -49,7 +51,7 @@ def load_peaks(peaks_path: str, quiet: bool = False) -> pd.DataFrame:
     df.columns = cols
 
     df["start"] = pd.to_numeric(df["start"], errors="coerce")
-    df["end"]   = pd.to_numeric(df["end"],   errors="coerce")
+    df["end"] = pd.to_numeric(df["end"], errors="coerce")
     before = len(df)
     df = df.dropna(subset=["start", "end"]).copy()
     dropped = before - len(df)
@@ -69,6 +71,8 @@ def load_peaks(peaks_path: str, quiet: bool = False) -> pd.DataFrame:
         log(f"Warning: Found {dup.sum()} duplicated peaks; removing duplicates.", quiet)
         df = df.drop_duplicates(subset=["chr", "start", "end"]).copy()
 
+    # add a stable peak_id for joining/pivoting in standalone mode
+    df["peak_id"] = [f"peak_{i}" for i in range(len(df))]
     return df
 
 

@@ -36,11 +36,6 @@ import numpy as np
 import pandas as pd
 
 
-
-# -------------------------
-# Shared helpers
-# -------------------------
-
 def log(msg: str, quiet: bool) -> None:
     if not quiet:
         print(msg, flush=True)
@@ -176,10 +171,9 @@ def rank_by_specificity(
     return out
 
 
-
-# -------------------------
-# Standalone script CLI
-# -------------------------
+# ─────────────────────────────────────────────────────────────────────────────
+# Standalone CLI
+# ─────────────────────────────────────────────────────────────────────────────
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(

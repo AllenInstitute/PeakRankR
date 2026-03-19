@@ -4,6 +4,7 @@ gc.py (pypeakranker)
 
 Compute GC fraction per peak from a reference genome FASTA.
 
+
 - add_gc(table_tsv, reference_fasta, out_tsv): read an existing feature table (chr/start/end),
   append GC_content, write out (can overwrite same file).
 
@@ -19,11 +20,6 @@ import os
 import pandas as pd
 from pyfaidx import Fasta
 
-
-
-# -------------------------
-# Shared helpers
-# -------------------------
 
 def log(msg: str, quiet: bool) -> None:
     if not quiet:
@@ -48,7 +44,7 @@ def load_peaks(peaks_path: str, quiet: bool = False) -> pd.DataFrame:
     df.columns = cols
 
     df["start"] = pd.to_numeric(df["start"], errors="coerce")
-    df["end"]   = pd.to_numeric(df["end"],   errors="coerce")
+    df["end"] = pd.to_numeric(df["end"], errors="coerce")
     before = len(df)
     df = df.dropna(subset=["start", "end"]).copy()
     dropped = before - len(df)
@@ -135,7 +131,6 @@ def add_gc(
     ensure_parent_dir(out_tsv)
     out.to_csv(out_tsv, sep="\t", index=False)
     log(f"Wrote table with GC_content: {out_tsv}", quiet)
-
 
 
 # -------------------------
