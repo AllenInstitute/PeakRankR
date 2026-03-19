@@ -194,7 +194,7 @@ def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], 
         files = list(bigwig_files)
     else:
         if bigwig_dir is None:
-        raise ValueError("Provide exactly one of --bigwig-dir or --bigwig-files")
+            raise ValueError("Provide exactly one of --bigwig-dir or --bigwig-files")
         patterns = [p.strip() for p in pattern.split(",") if p.strip()]
         files = []
         for pat in patterns:
