@@ -1,0 +1,24 @@
+{
+  "title": "PyPeakRanker: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking",
+  "description": "A Python package for extracting quantitative features from genomic peaks and assembling them into a reproducible, analysis-ready feature table.",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Somasundaram, Saroja",
+      "affiliation": "Allen Institute for Brain Science",
+      "orcid": "0000-0002-3729-9849"
+    }
+  ],
+  "keywords": [
+    "genomics", "ATAC-seq", "BigWig", "regulatory elements",
+    "peak ranking", "bioinformatics", "enhancer"
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "10.1016/j.xgen.2025.100879",
+      "scheme": "doi"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pypeakranker"
+dynamic = ["version"]
+description = "Reproducible peak-level feature extraction for regulatory element ranking"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Saroja Somasundaram", email = "sarojas@alleninstitute.org"}
+]
+keywords = [
+  "genomics", "ATAC-seq", "BigWig", "regulatory elements",
+  "peak ranking", "bioinformatics", "feature extraction"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+
+dependencies = [
+  "numpy",
+  "pandas",
+  "pyBigWig",
+  "pyfaidx",
+  "scipy"
+]
+
+[project.scripts]
+pypeakranker = "pypeakranker.cli:main"
+
+[project.urls]
+Repository = "https://github.com/AllenInstitute/PyPeakRankR"
+"Bug Tracker" = "https://github.com/AllenInstitute/PyPeakRankR/issues"
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev  = ["pytest", "black", "ruff"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pypeakranker._version.__version__"}
