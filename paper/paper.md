@@ -79,13 +79,10 @@ but does not produce portable, tool-agnostic feature tables. `pyfaidx`
 [@Shirley2015] enables FASTA sequence access but provides no genomics feature
 pipeline.
 
-PyPeakRankR fills the gap between these low-level libraries and higher-level
-analysis frameworks. Rather than competing with or duplicating existing tools,
-it composes them: `pyBigWig` for signal extraction, `pyfaidx` for sequence
-access, `scipy` [@Virtanen2020] for distribution metrics. The key design
-contribution is the composable CLI pipeline that assembles heterogeneous features
-into a single, reproducible TSV table that any downstream tool or statistical
-model can consume.
+PyPeakRankR fills this gap by composing these libraries — `pyBigWig` for
+signal extraction, `pyfaidx` for sequence access, `scipy` [@Virtanen2020]
+for distribution metrics — into a composable CLI pipeline that assembles
+heterogeneous features into a single reproducible TSV table.
 
 # Software design
 
@@ -132,33 +129,56 @@ the per-base signal profile within the peak. Figure adapted from Wirthlin et al.
 
 # Ranking vs. MACS2 fold-change
 
-A common approach to peak prioritization is to sort peaks by MACS2
-[@Zhang2008] fold-change or significance score. While this ranks peaks by
-signal strength, it does not capture cell-type specificity. A peak with high
-fold-change may be broadly accessible across many cell types — a housekeeping
-element — and therefore a poor candidate for cell-type targeted experiments.
+Sorting peaks by MACS2 [@Zhang2008] fold-change ranks by signal strength
+but not specificity — a broadly accessible peak is a poor candidate for
+cell-type targeted experiments.
 
-Figure 2 illustrates this distinction using ten MACS2 peaks from a real
-ATAC-seq experiment. When ranked by fold-change (left), peak P1 (chr4) is
-placed last because it has the lowest fold-change (11.7) of the set. When
-ranked by PyPeakRankR specificity score (right), P1 is ranked first because
-its signal is concentrated in the target cell type relative to background.
-Conversely, peaks P3 (chr1) and P10 (chr10) rank at the top by fold-change
-but near the bottom by specificity, consistent with broad chromatin
-accessibility across cell types. This divergence illustrates why fold-change
-alone is insufficient for selecting cell-type specific regulatory elements.
+Figure 2 illustrates this using ten MACS2 narrowPeak calls (Table 1)
+scored against four ENCODE human tissue ATAC-seq BigWig tracks
+(GRCh38): colonic mucosa [@ENCODE2020] (ENCFF557AZH, ENCSR970UNF),
+liver (ENCFF160VHY, ENCSR802GEV), heart left ventricle
+(ENCFF455AFI, ENCSR117PYB), and lung (ENCFF210HIS, ENCSR647AOY).
+Signal was extracted using PyPeakRankR's `add-signal` command.
+Specificity scores (colon / mean across tissues, normalised [0, 1])
+diverge substantially from MACS2 fold-change ranks. P6 (chrX,
+FC=14.7, rank #7) achieves the highest specificity (1.000) with colon
+mean=320 versus liver=7.6 and heart=7.1. P4 (chr2, FC=16.6, rank #3)
+scores lowest (0.000) with signal spread across all tissues. P1
+(chr4) is ambiguous: high colon signal but substantial heart
+signal (mean=83.8). Table 1 lists all ten peaks.
 
-![Comparison of MACS2 fold-change ranking (left) versus PyPeakRankR
-specificity ranking (right) for ten MACS2 narrowPeak calls from a real
-ATAC-seq experiment (test.bed). Peaks with the highest MACS2 fold-change
-are not necessarily the most cell-type specific. P1 (chr4, green border)
-ranks last by fold-change (FC = 11.7) but first by specificity. P3 (chr1)
-and P10 (chr10) rank first and second by fold-change (FC = 17.0 and 17.4)
-but near the bottom by specificity, consistent with broad chromatin
-accessibility across cell types. Specificity scores are the ratio of target
-to mean background ATAC signal, min-max normalised to [0, 1]; rank 1 is
-the peak most exclusively active in the target
-group.](browser_tracks_comparison.png)
+![ATAC-seq signal tracks across four human tissues (colonic mucosa, liver,
+heart left ventricle, lung) for selected peaks from Table 1. Left panel:
+top peaks by MACS2 fold-change, showing broadly accessible signal across
+all tissues. Right panel: top peaks by PyPeakRankR specificity score,
+showing concentrated signal in the target tissue. Signal values are MACS2
+p-value BigWig tracks from ENCODE (GRCh38); dashed lines mark MACS2
+summits. Specificity scores are the ratio of target to mean background
+signal across all four tissues, min-max normalised to [0,
+1].](browser_tracks_comparison.png)
+
+
+| Peak | Coordinates (GRCh38) | FC | FC rank | Colon | Liver | Heart | Lung | Spec | Spec rank |
+|------|----------------------|----|---------|-------|-------|-------|------|------|-----------|
+| P1  | chr4:49,149,084–49,149,919   | 11.66 | 10 | 444.8 |  4.4 | 83.8 | 49.4 | 0.105 | 8  |
+| P2  | chr18:12,947,298–12,948,641  | 15.87 |  5 | 327.3 | 14.8 | 19.5 | 55.2 | 0.383 | 4  |
+| P3  | chr1:244,451,043–244,452,405 | 17.03 |  2 | 339.2 |  9.7 | 21.4 | 50.3 | 0.650 | 3  |
+| P4  | chr2:178,450,461–178,452,049 | 16.59 |  3 | 242.1 | 18.2 | 16.4 | 43.8 | 0.000 | 10 |
+| P5  | chr5:119,267,962–119,269,594 | 16.40 |  4 | 212.0 | 14.3 | 18.3 | 35.7 | 0.015 | 9  |
+| P6  | chrX:1,391,993–1,393,130     | 14.75 |  7 | 319.8 |  7.6 |  7.1 | 49.0 | 1.000 | 1  |
+| P7  | chr2:197,498,901–197,500,709 | 13.91 |  9 | 241.8 | 13.2 |  8.7 | 39.8 | 0.526 | 5  |
+| P8  | chr8:144,826,667–144,827,949 | 15.51 |  6 | 296.6 |  6.1 | 18.6 | 47.3 | 0.628 | 2  |
+| P9  | chr10:132,536,759–132,537,934| 14.17 |  8 | 357.5 | 11.6 | 27.6 | 70.4 | 0.127 | 7  |
+| P10 | chr10:69,123,341–69,124,698  | 17.35 |  1 | 248.7 | 10.0 | 17.9 | 35.3 | 0.533 | 6  |
+
+: Ten MACS2 narrowPeak calls used in Figure 2 (GRCh38, colonic mucosa
+ENCSR970UNF [@ENCODE2020]). MACS2 fold-change (FC) and PyPeakRankR
+specificity score both range 0–1 within this set; ranks frequently
+diverge, confirming that signal strength alone does not predict
+tissue-specific accessibility. Specificity computed using `pypeakranker rank-specificity` with
+four ENCODE tissue BigWig tracks. {#tbl:peaks}
+
+
 
 # Research impact statement
 
@@ -180,8 +200,7 @@ enhancer-AAV tools achieved >70% on-target specificity across cell types,
 with exemplary enhancers exceeding 90%.
 
 These applications demonstrate that PyPeakRankR's feature extraction produces
-rankings with direct experimental utility, spanning multiple species and brain
-regions. The software is openly available and documented for community reuse.
+rankings with direct experimental utility across species and brain regions.
 
 # Implementation
 
@@ -189,28 +208,21 @@ PyPeakRankR is implemented in Python (>=3.9) with the following dependencies:
 `pandas` [@Reback2020] for tabular data handling, `numpy` [@Harris2020] for
 numerical computation, `pyBigWig` [@Ramirez2020pyBigWig] for BigWig signal extraction,
 `pyfaidx` [@Shirley2015] for FASTA sequence access, and `scipy` [@Virtanen2020]
-for statistical distribution metrics. The package is installable via pip from
-GitHub, provides a `pypeakranker` CLI entry point, and includes unit tests
-covering all core functions. Source code is available at
-<https://github.com/AllenInstitute/PeakRankR/tree/python-package> under the
-MIT license.
+for statistical distribution metrics. The package is installable via pip from GitHub, includes a `pypeakranker`
+CLI, unit tests, and example data (`tests/test.bed`). Source code:
+<https://github.com/AllenInstitute/PeakRankR/tree/python-package> (MIT).
 
 # AI usage disclosure
 
-Generative AI tools (Claude, Anthropic) were used to assist with: code
-scaffolding and refactoring of module structure, drafting sections of this
-paper and the README, and test scaffolding. All AI-assisted outputs were
-reviewed, edited, and validated by the authors. All core design decisions —
-the table-first pipeline architecture, the composable CLI structure, the
-specificity ranking formula, and the feature set — were made by the human
-authors. The authors take full responsibility for the accuracy and content of
-all submitted materials.
+Generative AI tools (Claude, Anthropic) assisted with code scaffolding,
+paper drafting, and test scaffolding. All outputs were reviewed and validated
+by the authors, who take full responsibility for all submitted materials.
+All core design decisions were made by the human authors.
 
 # Acknowledgements
 
-Development was supported by the Allen Institute for Brain Science and informed
-by regulatory genomics workflows developed in the Human Cell Types program.
-The authors thank the Allen Institute bioinformatics and enhancer AAV teams for
-feedback on feature definitions and pipeline design.
+Development was supported by the Allen Institute for Brain Science.
+The authors thank the bioinformatics and enhancer AAV teams for feedback
+on feature definitions and pipeline design.
 
 # References
