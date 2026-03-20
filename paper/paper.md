@@ -39,8 +39,8 @@ matrix — covering BigWig signal summaries, GC content, PhyloP conservation sco
 distribution moments, and ATAC specificity rankings — that can be used for
 downstream statistical analysis, ranking, or machine learning applications. By
 separating deterministic feature generation from user defined ranking logic,
-PyPeakRankR promotes transparency, modularity, and reproducibility in regulatory
-element analysis.
+PyPeakRankR promotes transparency, modularity, and reproducibility. It runs
+in minutes on thousands of peaks, making it a practical first-pass before downstream modelling.
 
 # Statement of need
 
@@ -50,10 +50,9 @@ higher-order signal statistics. These features are typically computed using
 custom per project scripts that vary across laboratories, complicating
 benchmarking and cross-study integration.
 
-The target audience is computational biologists and genomics researchers who
-work with scATAC-seq or bulk ATAC-seq data and need to systematically prioritize
-peaks for experimental follow-up — particularly for enhancer discovery, AAV tool
-design, or regulatory element ranking across cell types or species.
+The target audience is computational biologists who work with scATAC-seq or
+bulk ATAC-seq data and need to systematically prioritize peaks for experimental
+follow-up, particularly for enhancer discovery or AAV tool design.
 
 Existing tools address related but distinct problems: peak callers such as
 MACS2 [@Zhang2008] identify open chromatin regions but rank peaks only by
@@ -77,10 +76,9 @@ but does not produce portable, tool agnostic feature tables. `pyfaidx`
 [@Shirley2015] enables FASTA sequence access but provides no genomics feature
 pipeline.
 
-PyPeakRankR fills this gap by composing these libraries — `pyBigWig` for
-signal extraction, `pyfaidx` for sequence access, `scipy` [@Virtanen2020]
-for distribution metrics — into a composable CLI pipeline that assembles
-heterogeneous features into a single reproducible TSV table.
+PyPeakRankR fills this gap by composing `pyBigWig`, `pyfaidx`, and
+`scipy` [@Virtanen2020] into a CLI pipeline that assembles heterogeneous
+features into a single reproducible TSV table.
 
 # Software design
 
@@ -89,8 +87,9 @@ PyPeakRankR is built around three core design decisions:
 **1. Table-first, composable pipeline.** Every subcommand reads an existing TSV
 and appends columns without modifying the peak coordinates. This means a user
 can run any subset of steps, add custom columns from other tools, and the table
-remains valid throughout. The alternative . A monolithic script requires users to rerun everything when adding
-a new feature type. The table-first design enables incremental extension.
+remains valid throughout. A monolithic script that computes all features at once requires users to rerun
+everything when adding a new feature type. The table-first design enables
+incremental extension.
 
 **2. Separation of feature extraction from ranking.** Feature extraction is
 deterministic: given the same inputs and the same BigWig files, the same table
@@ -105,27 +104,26 @@ public Python function (`init_table`, `add_signal`, `add_gc`, `add_phylop`,
 in shell pipelines and in Python notebooks or workflows, without reimplementing
 logic.
 
-The specificity ranking formula is: for each peak, compute the ratio of the
-target group's signal to the mean signal across all background groups, then
-min-max normalise to [0, 1] across all peaks. This definition matches the CERP
-pipeline used in [@Wirthlin2026] and is consistent with the ATAC-specificity
-metric validated in the BICCN challenge [@Johansen2025].
+The specificity ranking formula computes the ratio of target group signal to
+mean background signal, then min-max normalises to [0, 1]. This matches the
+CERP pipeline [@Wirthlin2026] and the ATAC-specificity metric validated in
+the BICCN challenge [@Johansen2025].
 
-The table-first design is directly extensible: future columns could include
-sequence model importance scores (e.g., from Borzoi or Enformer) or spatially
-resolved specificity scores from MERFISH or other spatial transcriptomics
-data, integrating epigenomic and spatial context in one reproducible matrix.
+Each feature has a distinct biological rationale. GC content is lower in active
+enhancers than in promoters or bulk genomic DNA, reflecting differences in
+nucleosome occupancy. PhyloP conservation [@Pollard2010] identifies peaks under
+cross-species purifying selection. Signal distribution moments — kurtosis
+(sharpness), skewness (asymmetry), and bimodality (Sarle's coefficient) — are
+motivated by Lu et al. [@Lu2015], who showed these shape features distinguish
+enhancers from promoters in ChIP-seq data more reliably than signal intensity
+alone. The table-first design is directly extensible: future columns could
+include sequence model importance scores (e.g., from Borzoi or Enformer) or
+spatially resolved scores from MERFISH, integrating epigenomic and spatial
+context in one reproducible matrix.
 
-Figure 1 illustrates the features collected by PyPeakRankR for each candidate
-peak.
-
-![Features collected by PyPeakRankR. GC content is lower in active enhancers
-than in promoters or bulk DNA, reflecting differences in nucleosome occupancy.
-PhyloP scores [@Pollard2010] quantify cross-species constraint. ATAC specificity
-captures differential accessibility between cell groups. Kurtosis, skewness,
-and bimodality (Sarle's coefficient) describe signal shape — inspired by Lu et
-al. [@Lu2015], who showed these moments distinguish enhancers from promoters
-in ChIP-seq data. Figure adapted from Wirthlin et al.
+![Features collected by PyPeakRankR for each candidate peak: GC content,
+PhyloP conservation, ATAC specificity, and signal distribution moments
+(kurtosis, skewness, bimodality). Figure adapted from Wirthlin et al.
 (2026) [@Wirthlin2026].](figure6_panelA.png)
 
 # Ranking vs. MACS2 fold change
@@ -141,22 +139,23 @@ liver (ENCFF160VHY, ENCSR802GEV), heart left ventricle
 (ENCFF455AFI, ENCSR117PYB), and lung (ENCFF210HIS, ENCSR647AOY).
 Signal was extracted using PyPeakRankR's `add-signal` command.
 Specificity scores (colon / mean across tissues, normalised [0, 1])
-diverge substantially from MACS2 fold change ranks. P6 (chrX,
-FC=14.7, rank #7) achieves the highest specificity (1.000) with colon
-mean=320 versus liver=7.6 and heart=7.1. P4 (chr2, FC=16.6, rank #3)
-scores lowest (0.000) with signal spread across all tissues. P1
-(chr4) is ambiguous: high colon signal but substantial heart
-signal (mean=83.8). Table 1 lists all ten peaks.
+diverge substantially from MACS2 fold change ranks (Figure 2, Table 1).
+The four peaks shown span the full spectrum: P6 (rank #7 by FC) is the
+most colon-specific (Spec=1.00); P1 (rank #10 by FC, lowest in the set)
+is ambiguous with both colon and heart active; P9 shows a colon-plus-lung
+pattern; and P4 (rank #3 by FC) is the broadest, with signal spread
+across all four tissues and the lowest specificity score (0.000).
 
-![ATAC-seq signal tracks for four peaks across colonic mucosa (orange),
-liver (purple), heart left ventricle (red), and lung (green). Signal
-is the MACS2 p-value BigWig extracted by PyPeakRankR from four ENCODE
-GRCh38 tracks. Mean signal per tissue is shown in the coloured badge
-(right). Dashed lines mark MACS2 summits. The four peaks illustrate
-distinct accessibility patterns: P6 (colon-specific, Spec=1.00), P1
-(ambiguous — colon and heart both active, Spec=0.11), P9
-(colon and lung, Spec=0.13), and P4 (broadly accessible across all
-tissues, Spec=0.00, MACS2 rank #3).](browser_tracks_comparison.png)
+![ATAC-seq signal tracks across four human tissues for peaks spanning the
+full specificity spectrum. Mean MACS2 p-value signal per tissue is shown
+in the coloured badge (right); dashed lines mark MACS2 summits. P6
+(Spec=1.00) is colon-specific with liver and heart near background. P1
+(Spec=0.11) is ambiguous — both colon (mean=445) and heart (mean=84)
+are active despite P1 having the lowest MACS2 fold change in the set.
+P9 (Spec=0.13) shows a distinct colon-plus-lung pattern (lung mean=70).
+P4 (Spec=0.00, MACS2 rank #3) is broadly accessible across all four
+tissues, illustrating that high fold change does not imply tissue
+specificity.](browser_tracks_comparison.png)
 
 
 | Peak | Coordinates (GRCh38) | FC | FC rank | Colon | Liver | Heart | Lung | Spec | Spec rank |
@@ -199,8 +198,7 @@ outperformed conventional fold-change approaches, and the resulting
 enhancer-AAV tools achieved >70% on-target specificity across cell types,
 with exemplary enhancers exceeding 90%.
 
-These applications demonstrate that PyPeakRankR's feature extraction produces
-rankings with direct experimental utility across species and brain regions.
+These results establish direct experimental utility.
 
 # Implementation
 
@@ -208,8 +206,8 @@ PyPeakRankR is implemented in Python (>=3.9) with the following dependencies:
 `pandas` [@Reback2020] for tabular data handling, `numpy` [@Harris2020] for
 numerical computation, `pyBigWig` [@Ramirez2020pyBigWig] for BigWig signal extraction,
 `pyfaidx` [@Shirley2015] for FASTA sequence access, and `scipy` [@Virtanen2020]
-for statistical distribution metrics. The package is installable via pip from GitHub, includes a `pypeakranker`
-CLI, unit tests, and example data (`tests/test.bed`). Source code:
+for statistical distribution metrics. Installable via pip from GitHub; includes a `pypeakranker` CLI, unit tests,
+and example data (`tests/test.bed`). Source:
 <https://github.com/AllenInstitute/PeakRankR/tree/python-package> (MIT).
 
 # AI usage disclosure
