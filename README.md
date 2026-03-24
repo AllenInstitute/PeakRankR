@@ -174,6 +174,31 @@ suppress errors for chromosomes absent from the PhyloP track.
 pypeakranker {init,add-signal,add-gc,add-phylop,add-moments,rank-specificity} --help
 ```
 
+| Subcommand | Description |
+|---|---|
+| `init` | Create initial TSV from a BED file |
+| `add-signal` | Add per-cell-type BigWig signal columns |
+| `add-gc` | Add GC content column from a FASTA reference |
+| `add-phylop` | Add PhyloP conservation column (optional liftOver) |
+| `add-moments` | Add kurtosis, skewness, bimodality columns |
+| `rank-specificity` | Compute specificity score and rank peaks |
+
+**`rank-specificity`** scores each peak by the ratio of its signal in the target group to the mean signal across all background groups, then min-max normalises to [0, 1]. Higher scores indicate greater cell-type specificity.
+
+```bash
+pypeakranker rank-specificity \
+  --table features.tsv \
+  --target Astrocytes-1 \
+  --out ranked.tsv
+```
+
+Output columns added by `rank-specificity`:
+
+| Column | Description |
+|---|---|
+| `specificity` | Normalised specificity score [0–1] |
+| `specificity_rank` | Rank by specificity (1 = most specific) |
+
 ---
 
 ## Running Tests
@@ -223,7 +248,7 @@ Saroja Somasundaram — Allen Institute for Brain Science
 
 Nelson J. Johansen — Allen Institute for Brain Science
 
-Jeremy Miller — Allen Institute for Brain Science
+Jeremy A. Miller — Allen Institute for Brain Science
 
 Trygve E. Bakken — Allen Institute for Brain Science
 

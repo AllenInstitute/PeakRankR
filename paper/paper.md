@@ -15,7 +15,7 @@ authors:
   - name: Nelson J. Johansen
     orcid: 0000-0002-4436-969X
     affiliation: 1
-  - name: Jeremy Miller
+  - name: Jeremy A. Miller
     orcid: 0000-0003-4549-3747
     affiliation: 1
     corresponding: true
@@ -52,41 +52,36 @@ in minutes on thousands of peaks, making it a practical first step before downst
 
 # Statement of need
 
-Peak prioritization requires combining signal intensity, sequence properties
-such as GC content, evolutionary conservation (PhyloP [@Pollard2010]), and
-higher-order signal statistics. These features are typically computed using
-custom per project scripts that vary across laboratories, complicating
-benchmarking and cross-study integration.
-
-The target audience is computational biologists who work with single-cell ATAC-seq (scATAC-seq) or
-bulk ATAC-seq data and need to systematically prioritize peaks for experimental
-follow-up, particularly for enhancer discovery or adeno-associated virus (AAV) tool design.
+Prioritizing genomic peaks across cell types requires combining multiple
+features: signal intensity, sequence properties such as GC content,
+evolutionary conservation (PhyloP [@Pollard2010]), and higher-order signal
+statistics. These features are typically computed using custom per-project
+scripts that vary across laboratories, complicating benchmarking and
+cross-study integration. PyPeakRankR addresses this gap for computational
+biologists working with single-cell ATAC-seq (scATAC-seq) or bulk ATAC-seq
+data who need to systematically prioritize peaks for experimental follow-up,
+particularly for enhancer discovery or adeno-associated virus (AAV) tool design.
 
 # State of the field
 
-Several tools perform individual aspects of peak level feature computation.
-`pyBigWig` [@Ramirez2020pyBigWig] provides low-level BigWig access but no peak level
-aggregation framework. `deepTools` [@Ramírez2016] computes matrix summaries but
-is oriented toward visualization rather than tabular feature assembly. ArchR
-[@Corces2018] computes cell-type specificity scores within its own data model
-but does not produce portable, tool agnostic feature tables. `pyfaidx`
-[@Shirley2015] enables FASTA sequence access but provides no genomics feature
+Existing genomics tools each address part of the problem but none assembles
+a unified, portable feature matrix. Peak callers such as MACS2 [@Zhang2008]
+identify open chromatin regions but rank peaks only by fold change or p-value,
+reflecting signal strength rather than cell-type specificity — a peak with
+high fold change may be active across many cell types and therefore a poor
+candidate for cell-type targeted AAV tools. Differential accessibility tools
+such as ArchR [@Corces2018] test for cell-type enrichment but operate within
+their own data model and do not produce portable, tool-agnostic feature tables.
+Annotation tools such as GREAT [@McLean2010] link peaks to genes but do not
+score chromatin features. At the library level, `pyBigWig` [@Ramirez2020pyBigWig]
+provides low-level BigWig access without peak-level aggregation, `deepTools`
+[@Ramírez2016] computes matrix summaries oriented toward visualization, and
+`pyfaidx` [@Shirley2015] enables FASTA access without a genomics feature
 pipeline.
 
-Existing tools address related but distinct problems: peak callers such as
-MACS2 [@Zhang2008] identify open chromatin regions but rank peaks only by
-fold change or p-value, which reflects signal strength rather than cell-type
-specificity. A peak with high MACS2 fold change may be active across many cell
-types (a housekeeping element) and therefore a poor candidate for cell-type
-targeted AAV tools. Differential accessibility tools such as ArchR [@Corces2018]
-test for cell type enrichment but operate within their own data model. Annotation
-tools such as GREAT [@McLean2010] link peaks to genes. None provide a unified,
-flexible framework for assembling a standardized feature matrix across
-heterogeneous input tracks — which is precisely what PyPeakRankR addresses.
-
 PyPeakRankR fills this gap by combining `pyBigWig`, `pyfaidx`, and
-`scipy` [@Virtanen2020] into a CLI pipeline that assembles heterogeneous
-features into a single reproducible TSV table.
+`scipy` [@Virtanen2020] into a flexible CLI pipeline that assembles
+heterogeneous features into a single reproducible TSV table.
 
 # Software design
 
@@ -163,16 +158,15 @@ functional specificity [@Johansen2025].
 ![Schematic ATAC-seq signal tracks across five cortical cell types for
 three validated L5 ET enhancers from the BICCN Community Challenge
 [@Johansen2025]. Each column shows per-cell-type read-pileup profiles;
-dashed lines mark the MACS2 summit; purple ticks below denote POU3F1
-transcription factor motifs. AiE0456m shows high, L5 ET-specific signal
-(ArchR rank #1; PyPeakRankR Spec=0.92) and is correctly prioritised by
-both methods. AiE0460m shows comparable signal height across all five
-cell types — ArchR ranks it #2 by log2FC while PyPeakRankR's specificity
-ratio identifies it as non-specific (Spec=0.18). AiE0463m has low total
-signal — placing it at ArchR rank #18 — but its signal is nearly exclusive
-to L5 ET neurons; PyPeakRankR rescues it (Spec=0.61). In vivo validation
-from adeno-associated virus (AAV) screening in mouse motor cortex
-[@Johansen2025].](biccn_three_peaks.png)
+dashed vertical lines mark the MACS2 summit. AiE0456m shows high,
+L5 ET-specific signal (ArchR rank #1; PyPeakRankR Spec=0.92) and is
+correctly prioritised by both methods. AiE0460m shows comparable signal
+height across all five cell types — ArchR ranks it #2 by log2FC while
+PyPeakRankR's specificity ratio identifies it as non-specific (Spec=0.18).
+AiE0463m has low total signal — placing it at ArchR rank #18 — but its
+signal is nearly exclusive to L5 ET neurons; PyPeakRankR rescues it
+(Spec=0.61). In vivo validation from adeno-associated virus (AAV)
+screening in mouse motor cortex [@Johansen2025].](biccn_three_peaks.png)
 
 | Enhancer | ArchR rank | PyPeakRankR Spec | ATAC pattern | In vivo result |
 |----------|-----------|-----------------|--------------|----------------|
