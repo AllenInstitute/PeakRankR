@@ -15,6 +15,14 @@ authors:
   - name: Nelson J. Johansen
     orcid: 0000-0002-4436-969X
     affiliation: 1
+  - name: Jeremy Miller
+    orcid: 0000-0003-4549-3747
+    affiliation: 1
+    corresponding: true
+  - name: Trygve E. Bakken
+    orcid: 0000-0003-1110-6431
+    affiliation: 1
+    corresponding: true
 affiliations:
   - name: Allen Institute for Brain Science, Seattle, WA, USA
     index: 1
@@ -26,7 +34,7 @@ doi: 10.5281/zenodo.15238527
 # Summary
 
 High-throughput chromatin accessibility assays such as ATAC-seq [@Buenrostro2013]
-generate large sets of candidate regulatory elements. Downstream analyses require
+generate large sets of candidate regulatory elements called 'peaks'. Downstream analyses require
 prioritizing peaks across cell types, experimental conditions, or species to
 identify the most biologically relevant candidates for functional validation.
 However, peak prioritization workflows are frequently implemented using ad hoc
@@ -40,7 +48,7 @@ distribution moments, and ATAC specificity rankings — that can be used for
 downstream statistical analysis, ranking, or machine learning applications. By
 separating deterministic feature generation from user defined ranking logic,
 PyPeakRankR promotes transparency, modularity, and reproducibility. It runs
-in minutes on thousands of peaks, making it a practical first-pass before downstream modelling.
+in minutes on thousands of peaks, making it a practical first step before downstream modelling.
 
 # Statement of need
 
@@ -50,9 +58,9 @@ higher-order signal statistics. These features are typically computed using
 custom per project scripts that vary across laboratories, complicating
 benchmarking and cross-study integration.
 
-The target audience is computational biologists who work with scATAC-seq or
+The target audience is computational biologists who work with single-cell ATAC-seq (scATAC-seq) or
 bulk ATAC-seq data and need to systematically prioritize peaks for experimental
-follow-up, particularly for enhancer discovery or AAV tool design.
+follow-up, particularly for enhancer discovery or adeno-associated virus (AAV) tool design.
 
 Existing tools address related but distinct problems: peak callers such as
 MACS2 [@Zhang2008] identify open chromatin regions but rank peaks only by
@@ -62,7 +70,7 @@ types (a housekeeping element) and therefore a poor candidate for cell-type
 targeted AAV tools. Differential accessibility tools such as ArchR [@Corces2018]
 test for cell type enrichment but operate within their own data model. Annotation
 tools such as GREAT [@McLean2010] link peaks to genes. None provide a unified,
-composable framework for assembling a standardized feature matrix across
+flexible framework for assembling a standardized feature matrix across
 heterogeneous input tracks — which is precisely what PyPeakRankR addresses.
 
 # State of the field
@@ -76,7 +84,7 @@ but does not produce portable, tool agnostic feature tables. `pyfaidx`
 [@Shirley2015] enables FASTA sequence access but provides no genomics feature
 pipeline.
 
-PyPeakRankR fills this gap by composing `pyBigWig`, `pyfaidx`, and
+PyPeakRankR fills this gap by combining `pyBigWig`, `pyfaidx`, and
 `scipy` [@Virtanen2020] into a CLI pipeline that assembles heterogeneous
 features into a single reproducible TSV table.
 
@@ -84,25 +92,22 @@ features into a single reproducible TSV table.
 
 PyPeakRankR is built around three core design decisions:
 
-**1. Table-first, composable pipeline.** Every subcommand reads an existing TSV
-and appends columns without modifying the peak coordinates. This means a user
-can run any subset of steps, add custom columns from other tools, and the table
-remains valid throughout. A monolithic script that computes all features at once requires users to rerun
-everything when adding a new feature type. The table-first design enables
-incremental extension.
+**1. Table-first, flexible pipeline.** Every subcommand reads an existing tab-separated values (TSV) file
+and appends columns without modifying the peak coordinates. Users can run any
+subset of steps or add custom columns; the table remains valid throughout.
+The table-first design enables incremental extension.
 
 **2. Separation of feature extraction from ranking.** Feature extraction is
 deterministic: given the same inputs and the same BigWig files, the same table
 is always produced. Ranking is deliberately left to the user or to the `rank-specificity` subcommand, which implements one well-defined ranking formula
 but is not the only option. This separation means benchmarking studies can
 compare ranking strategies using the same upstream feature matrix, which is
-exactly how PyPeakRankR was used in the BICCN challenge [@Johansen2025].
+exactly how PyPeakRankR was used in the Brain Initiative Cell Census Network (BICCN) challenge [@Johansen2025].
 
-**3. CLI + Python API parity.** Every subcommand is a thin wrapper over a
+**3. Command-line interface (CLI) + Python API parity.** Every subcommand wraps a
 public Python function (`init_table`, `add_signal`, `add_gc`, `add_phylop`,
-`add_moments`, `rank_by_specificity`). This means the tool works equally well
-in shell pipelines and in Python notebooks or workflows, without reimplementing
-logic.
+`add_moments`, `rank_by_specificity`), so the tool works equally in shell
+pipelines and Python notebooks without reimplementing logic.
 
 The specificity ranking formula computes the ratio of target group signal to
 mean background signal, then min-max normalises to [0, 1]. This matches the
@@ -118,66 +123,69 @@ motivated by Lu et al. [@Lu2015], who showed these shape features distinguish
 enhancers from promoters in ChIP-seq data more reliably than signal intensity
 alone. The table-first design is directly extensible: future columns could
 include sequence model importance scores (e.g., from Borzoi or Enformer) or
-spatially resolved scores from MERFISH, integrating epigenomic and spatial
-context in one reproducible matrix.
+spatially resolved scores from multiplexed error-robust fluorescence in situ
+hybridization (MERFISH), integrating epigenomic and spatial context in one
+reproducible matrix.
 
 ![Features collected by PyPeakRankR for each candidate peak: GC content,
 PhyloP conservation, ATAC specificity, and signal distribution moments
 (kurtosis, skewness, bimodality). Figure adapted from Wirthlin et al.
-(2026) [@Wirthlin2026].](figure6_panelA.png)
+(2026) [@Wirthlin2026].](figure6_panelA.png){ width=100% }
 
 # Ranking vs. MACS2 fold change
 
 Sorting peaks by MACS2 [@Zhang2008] fold change ranks by signal strength
-but not specificity — a broadly accessible peak is a poor candidate for
-cell type targeted experiments.
+but not specificity. ArchR [@Corces2018] ranks by differential accessibility
+(log2FC, FDR), capturing enrichment but without normalising signal across
+all background groups.
 
-Figure 2 illustrates this using ten MACS2 narrowPeak calls (Table 1)
-scored against four ENCODE human tissue ATAC-seq BigWig tracks
-(GRCh38): colonic mucosa [@ENCODE2020] (ENCFF557AZH, ENCSR970UNF),
-liver (ENCFF160VHY, ENCSR802GEV), heart left ventricle
-(ENCFF455AFI, ENCSR117PYB), and lung (ENCFF210HIS, ENCSR647AOY).
-Signal was extracted using PyPeakRankR's `add-signal` command.
-Specificity scores (colon / mean across tissues, normalised [0, 1])
-diverge substantially from MACS2 fold change ranks (Figure 2, Table 1).
-The four peaks shown span the full spectrum: P6 (rank #7 by FC) is the
-most colon-specific (Spec=1.00); P1 (rank #10 by FC, lowest in the set)
-is ambiguous with both colon and heart active; P9 shows a colon-plus-lung
-pattern; and P4 (rank #3 by FC) is the broadest, with signal spread
-across all four tissues and the lowest specificity score (0.000).
+Figure 2 illustrates these differences using three validated cortical
+enhancers from the Brain Initiative Cell Census Network (BICCN) Community
+Challenge [@Johansen2025], where PyPeakRankR ranked third among 16 methods.
+All three peaks target L5 extratelencephalic (ET) neurons in mouse motor
+cortex [@Johansen2025].
 
-![ATAC-seq signal tracks across four human tissues for peaks spanning the
-full specificity spectrum. Mean MACS2 p-value signal per tissue is shown
-in the coloured badge (right); dashed lines mark MACS2 summits. P6
-(Spec=1.00) is colon-specific with liver and heart near background. P1
-(Spec=0.11) is ambiguous — both colon (mean=445) and heart (mean=84)
-are active despite P1 having the lowest MACS2 fold change in the set.
-P9 (Spec=0.13) shows a distinct colon-plus-lung pattern (lung mean=70).
-P4 (Spec=0.00, MACS2 rank #3) is broadly accessible across all four
-tissues, illustrating that high fold change does not imply tissue
-specificity.](browser_tracks_comparison.png)
+AiE0456m has high ATAC-seq signal specifically in L5 ET neurons; both
+ArchR (rank #1) and PyPeakRankR (Spec=0.92) correctly prioritise it.
 
+AiE0460m has high total ATAC-seq signal — giving it ArchR rank #2 — but
+that signal is distributed across multiple cell types. PyPeakRankR's
+specificity ratio (target / mean background) correctly identifies it as
+non-specific (Spec=0.18) and deprioritises it.
 
-| Peak | Coordinates (GRCh38) | FC | FC rank | Colon | Liver | Heart | Lung | Spec | Spec rank |
-|------|----------------------|----|---------|-------|-------|-------|------|------|-----------|
-| P1  | chr4:49,149,084–49,149,919   | 11.66 | 10 | 444.8 |  4.4 | 83.8 | 49.4 | 0.105 | 8  |
-| P2  | chr18:12,947,298–12,948,641  | 15.87 |  5 | 327.3 | 14.8 | 19.5 | 55.2 | 0.383 | 4  |
-| P3  | chr1:244,451,043–244,452,405 | 17.03 |  2 | 339.2 |  9.7 | 21.4 | 50.3 | 0.650 | 3  |
-| P4  | chr2:178,450,461–178,452,049 | 16.59 |  3 | 242.1 | 18.2 | 16.4 | 43.8 | 0.000 | 10 |
-| P5  | chr5:119,267,962–119,269,594 | 16.40 |  4 | 212.0 | 14.3 | 18.3 | 35.7 | 0.015 | 9  |
-| P6  | chrX:1,391,993–1,393,130     | 14.75 |  7 | 319.8 |  7.6 |  7.1 | 49.0 | 1.000 | 1  |
-| P7  | chr2:197,498,901–197,500,709 | 13.91 |  9 | 241.8 | 13.2 |  8.7 | 39.8 | 0.526 | 5  |
-| P8  | chr8:144,826,667–144,827,949 | 15.51 |  6 | 296.6 |  6.1 | 18.6 | 47.3 | 0.628 | 2  |
-| P9  | chr10:132,536,759–132,537,934| 14.17 |  8 | 357.5 | 11.6 | 27.6 | 70.4 | 0.127 | 7  |
-| P10 | chr10:69,123,341–69,124,698  | 17.35 |  1 | 248.7 | 10.0 | 17.9 | 35.3 | 0.533 | 6  |
+AiE0463m has low total ATAC-seq signal, placing it at ArchR rank #18.
+Yet almost all of that signal falls within L5 ET neurons; PyPeakRankR
+detects this concentration and assigns Spec=0.61, rescuing a peak that
+signal-magnitude approaches miss. Multiple POU3F1 motifs at this locus
+— the canonical transcription factor for L5 ET neurons — support its
+functional specificity [@Johansen2025].
 
-: Ten MACS2 narrowPeak calls used in Figure 2 (GRCh38, colonic mucosa
-ENCSR970UNF [@ENCODE2020]). MACS2 fold change (FC) and PyPeakRankR
-specificity score both range 0–1 within this set; ranks frequently
-diverge, confirming that signal strength alone does not predict
-tissue-specific accessibility. Specificity computed using `pypeakranker rank-specificity` with
-four ENCODE tissue BigWig tracks. {#tbl:peaks}
+![Schematic ATAC-seq signal tracks across five cortical cell types for
+three validated L5 ET enhancers from the BICCN Community Challenge
+[@Johansen2025]. Each column shows per-cell-type read-pileup profiles;
+dashed lines mark the MACS2 summit; purple ticks below denote POU3F1
+transcription factor motifs. AiE0456m shows high, L5 ET-specific signal
+(ArchR rank #1; PyPeakRankR Spec=0.92) and is correctly prioritised by
+both methods. AiE0460m shows comparable signal height across all five
+cell types — ArchR ranks it #2 by log2FC while PyPeakRankR's specificity
+ratio identifies it as non-specific (Spec=0.18). AiE0463m has low total
+signal — placing it at ArchR rank #18 — but its signal is nearly exclusive
+to L5 ET neurons; PyPeakRankR rescues it (Spec=0.61). In vivo validation
+from adeno-associated virus (AAV) screening in mouse motor cortex
+[@Johansen2025].](biccn_three_peaks.png)
 
+| Enhancer | ArchR rank | PyPeakRankR Spec | ATAC pattern | In vivo result |
+|----------|-----------|-----------------|--------------|----------------|
+| AiE0456m |  1 | 0.92 | High, L5 ET-specific       | On-target (strong) |
+| AiE0460m |  2 | 0.18 | High, multi-cell-type      | Weak / non-specific |
+| AiE0463m | 18 | 0.61 | Low total, L5 ET-concentrated | On-target (specific) |
+
+: Three L5 ET cortical enhancers from the BICCN Community Challenge
+[@Johansen2025]. ArchR rank is based on differential accessibility
+(log2FC). PyPeakRankR specificity (Spec) is the normalised ratio of
+target-group signal to mean background signal, computed using
+`pypeakranker rank-specificity`. AiE0460m and AiE0463m represent
+opposite failure modes of signal-magnitude ranking. {#tbl:peaks}
 
 
 # Research impact statement
@@ -191,9 +199,9 @@ ranked among the top three methods out of 16 competing approaches for
 predicting functional cell-type specific enhancers across 19 cortical cell
 types, with direct experimental validation via in vivo AAV screening.
 
-In the companion basal ganglia study [@Wirthlin2026], PyPeakRankR was used
+In a recent basal ganglia study from our group [@Wirthlin2026], PyPeakRankR was used
 within the Cross-species Enhancer Ranking Pipeline (CERP) across multiple
-BG cell types in mouse and macaque. The composite feature rankings
+basal ganglia (BG) cell types in mouse and macaque. The composite feature rankings
 outperformed conventional fold-change approaches, and the resulting
 enhancer-AAV tools achieved >70% on-target specificity across cell types,
 with exemplary enhancers exceeding 90%.
@@ -219,8 +227,8 @@ All core design decisions were made by the human authors.
 
 # Acknowledgements
 
-Development was supported by the Allen Institute for Brain Science.
-The authors thank the bioinformatics and enhancer AAV teams for feedback
-on feature definitions and pipeline design.
+The authors thank the bioinformatics and enhancer adeno-associated virus (AAV) teams at the Allen Institute for Brain Science for feedback on feature definitions and pipeline design.
+
+This research was supported by the Allen Institute, founded by Jody Allen, chair and co‑founder of Allen Family Philanthropies, and the late Paul G. Allen, investor, philanthropist, and co‑founder of Microsoft. We gratefully acknowledge their vision and generosity, which make this work possible. This research was also supported by U.S. National Institutes of Health (NIH) BRAIN Initiative Human and Mammalian Brain Atlas (HMBA) BICAN grant UM1MH130981. The content of this study is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health.
 
 # References

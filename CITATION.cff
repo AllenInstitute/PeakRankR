@@ -16,6 +16,14 @@ authors:
     given-names: Nelson J.
     orcid: https://orcid.org/0000-0002-4436-969X
     affiliation: Allen Institute for Brain Science
+  - family-names: Miller
+    given-names: Jeremy
+    orcid: https://orcid.org/0000-0003-4549-3747
+    affiliation: Allen Institute for Brain Science
+  - family-names: Bakken
+    given-names: Trygve E.
+    orcid: https://orcid.org/0000-0003-1110-6431
+    affiliation: Allen Institute for Brain Science
 preferred-citation:
   type: article
   title: "PyPeakRankR: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking"
@@ -26,6 +34,12 @@ preferred-citation:
     - family-names: Johansen
       given-names: Nelson J.
       orcid: https://orcid.org/0000-0002-4436-969X
+    - family-names: Miller
+      given-names: Jeremy
+      orcid: https://orcid.org/0000-0003-4549-3747
+    - family-names: Bakken
+      given-names: Trygve E.
+      orcid: https://orcid.org/0000-0003-1110-6431
   journal: "Journal of Open Source Software"
   year: 2026
   doi: 10.5281/zenodo.15238527

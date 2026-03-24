@@ -1,7 +1,7 @@
 # PyPeakRankR
 
 <p align="center">
-  <img src="logo.png" width="180" alt="PyPeakRankR logo"/>
+  <img src="PyPR.png" width="180" alt="PyPeakRankR logo"/>
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -124,7 +124,19 @@ rank_by_specificity(
 
 ## Cross-assembly scoring (liftOver)
 
-To score peaks against a PhyloP track in a different genome assembly:
+`add-phylop` supports peaks in a **source** assembly scored against a
+PhyloP BigWig in a **target** assembly. Provide a UCSC chain file and
+PyPeakRankR will call `liftOver` automatically before querying the track.
+
+**Requirements**
+
+- UCSC `liftOver` binary installed and on your `PATH`
+  ([download](https://hgdownload.soe.ucsc.edu/admin/exe/))
+- A chain file for your source→target assembly pair
+  (e.g. `rheMac10ToHg38.over.chain.gz` from the
+  [UCSC download server](https://hgdownload.soe.ucsc.edu/goldenPath/rheMac10/liftOver/))
+
+**CLI example** — macaque peaks scored against the hg38 PhyloP 100-way track:
 
 ```bash
 pypeakranker add-phylop \
@@ -134,7 +146,25 @@ pypeakranker add-phylop \
   --out features.tsv
 ```
 
-Requires UCSC `liftOver` to be installed and on your `PATH`.
+**Python API example:**
+
+```python
+from pypeakranker import add_phylop
+
+add_phylop(
+    table_tsv="features.tsv",
+    phylop_bw="hg38.phyloP100way.bw",
+    out_tsv="features.tsv",
+    chain_file="rheMac10ToHg38.over.chain.gz",
+    liftover_exe="liftOver",       # path to binary if not on PATH
+    max_len=5000,                  # intervals longer than this receive 0
+    drop_lifted_coords=False,      # set True to omit chr_target columns
+)
+```
+
+Peaks that fail to lift over receive a score of `0`. Pass
+`--allow-missing-chroms` (CLI) or `allow_missing_chroms=True` (API) to
+suppress errors for chromosomes absent from the PhyloP track.
 
 ---
 

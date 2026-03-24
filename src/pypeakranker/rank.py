@@ -34,17 +34,7 @@ from typing import List, Optional
 
 import numpy as np
 import pandas as pd
-
-
-def log(msg: str, quiet: bool) -> None:
-    if not quiet:
-        print(msg, flush=True)
-
-
-def ensure_parent_dir(path: str) -> None:
-    parent = os.path.dirname(path)
-    if parent:
-        os.makedirs(parent, exist_ok=True)
+from pypeakranker._utils import log, ensure_parent_dir
 
 
 def _minmax_normalise(series: pd.Series) -> pd.Series:
