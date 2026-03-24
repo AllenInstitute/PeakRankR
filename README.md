@@ -1,7 +1,7 @@
 # PyPeakRankR
 
 <p align="center">
-  <img src="PyPR.png" width="180" alt="PyPeakRankR logo"/>
+  <img src="PyPR.png" width="320" alt="PyPeakRankR logo"/>
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -222,6 +222,10 @@ If you use PyPeakRankR in your research, please cite:
 Saroja Somasundaram — Allen Institute for Brain Science
 
 Nelson J. Johansen — Allen Institute for Brain Science
+
+Jeremy Miller — Allen Institute for Brain Science
+
+Trygve E. Bakken — Allen Institute for Brain Science
 
 ## License
 

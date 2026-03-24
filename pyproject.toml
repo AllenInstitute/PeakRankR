@@ -11,7 +11,9 @@ requires-python = ">=3.9"
 license = {file = "LICENSE"}
 authors = [
   {name = "Saroja Somasundaram", email = "sarojas@alleninstitute.org"},
-  {name = "Nelson J. Johansen", email = "nelsonj@alleninstitute.org"}
+  {name = "Nelson J. Johansen", email = "nelsonj@alleninstitute.org"},
+  {name = "Jeremy Miller", email = "jeremym@alleninstitute.org"},
+  {name = "Trygve E. Bakken", email = "trygveb@alleninstitute.org"}
 ]
 keywords = [
   "genomics", "ATAC-seq", "BigWig", "regulatory elements",

@@ -62,17 +62,6 @@ The target audience is computational biologists who work with single-cell ATAC-s
 bulk ATAC-seq data and need to systematically prioritize peaks for experimental
 follow-up, particularly for enhancer discovery or adeno-associated virus (AAV) tool design.
 
-Existing tools address related but distinct problems: peak callers such as
-MACS2 [@Zhang2008] identify open chromatin regions but rank peaks only by
-fold change or p-value, which reflects signal strength rather than cell-type
-specificity. A peak with high MACS2 fold change may be active across many cell
-types (a housekeeping element) and therefore a poor candidate for cell-type
-targeted AAV tools. Differential accessibility tools such as ArchR [@Corces2018]
-test for cell type enrichment but operate within their own data model. Annotation
-tools such as GREAT [@McLean2010] link peaks to genes. None provide a unified,
-flexible framework for assembling a standardized feature matrix across
-heterogeneous input tracks — which is precisely what PyPeakRankR addresses.
-
 # State of the field
 
 Several tools perform individual aspects of peak level feature computation.
@@ -83,6 +72,17 @@ is oriented toward visualization rather than tabular feature assembly. ArchR
 but does not produce portable, tool agnostic feature tables. `pyfaidx`
 [@Shirley2015] enables FASTA sequence access but provides no genomics feature
 pipeline.
+
+Existing tools address related but distinct problems: peak callers such as
+MACS2 [@Zhang2008] identify open chromatin regions but rank peaks only by
+fold change or p-value, which reflects signal strength rather than cell-type
+specificity. A peak with high MACS2 fold change may be active across many cell
+types (a housekeeping element) and therefore a poor candidate for cell-type
+targeted AAV tools. Differential accessibility tools such as ArchR [@Corces2018]
+test for cell type enrichment but operate within their own data model. Annotation
+tools such as GREAT [@McLean2010] link peaks to genes. None provide a unified,
+flexible framework for assembling a standardized feature matrix across
+heterogeneous input tracks — which is precisely what PyPeakRankR addresses.
 
 PyPeakRankR fills this gap by combining `pyBigWig`, `pyfaidx`, and
 `scipy` [@Virtanen2020] into a CLI pipeline that assembles heterogeneous
