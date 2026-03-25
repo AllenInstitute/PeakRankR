@@ -70,7 +70,7 @@ identify open chromatin regions but rank peaks only by fold change or p-value,
 reflecting signal strength rather than cell-type specificity — a peak with
 high fold change may be active across many cell types and therefore a poor
 candidate for cell-type targeted AAV tools. Differential accessibility tools
-such as ArchR [@Corces2018] test for cell-type enrichment but operate within
+such as ArchR [@Granja2021] test for cell-type enrichment but operate within
 their own data model and do not produce portable, tool-agnostic feature tables.
 Annotation tools such as GREAT [@McLean2010] link peaks to genes but do not
 score chromatin features. At the library level, `pyBigWig` [@Ramirez2020pyBigWig]
@@ -127,14 +127,15 @@ PhyloP conservation, ATAC specificity, and signal distribution moments
 (kurtosis, skewness, bimodality). Figure adapted from Wirthlin et al.
 (2026) [@Wirthlin2026].](figure6_panelA.png){ width=100% }
 
-# Ranking vs. MACS2 fold change
+# Benchmarking against the BICCN challenge
 
 Sorting peaks by MACS2 [@Zhang2008] fold change ranks by signal strength
-but not specificity. ArchR [@Corces2018] ranks by differential accessibility
+but not specificity. ArchR [@Granja2021] ranks by differential accessibility
 (log2FC, FDR), capturing enrichment but without normalising signal across
 all background groups.
 
-Figure 2 illustrates these differences using three validated cortical
+Figure 2 illustrates how PyPeakRankR's specificity metric differs from
+signal-magnitude approaches using three validated cortical
 enhancers from the Brain Initiative Cell Census Network (BICCN) Community
 Challenge [@Johansen2025], where PyPeakRankR ranked third among 16 methods.
 All three peaks target L5 extratelencephalic (ET) neurons in mouse motor
