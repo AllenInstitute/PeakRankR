@@ -207,7 +207,8 @@ pypeakranker {init,add-signal,add-gc,add-phylop,add-moments,rank-specificity} --
 ```bash
 pypeakranker rank-specificity \
   --table features.tsv \
-  --target Astrocytes-1 \
+  --target-cols Astrocytes_mean \
+  --background-cols Astrocytes_mean Neurons_mean Oligo_mean \
   --out ranked.tsv
 ```
 
@@ -215,7 +216,7 @@ Output columns added by `rank-specificity`:
 
 | Column | Description |
 |---|---|
-| `specificity` | Normalised specificity score [0–1] |
+| `specificity_score` | Normalised specificity score [0–1] |
 | `specificity_rank` | Rank by specificity (1 = most specific) |
 
 ---

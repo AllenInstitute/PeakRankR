@@ -75,7 +75,7 @@ their own data model and do not produce portable, tool-agnostic feature tables.
 Annotation tools such as GREAT [@McLean2010] link peaks to genes but do not
 score chromatin features. At the library level, `pyBigWig` [@Ramirez2020pyBigWig]
 provides low-level BigWig access without peak-level aggregation, `deepTools`
-[@Ramírez2016] computes matrix summaries oriented toward visualization, and
+[@Ramirez2016deepTools] computes matrix summaries oriented toward visualization, and
 `pyfaidx` [@Shirley2015] enables FASTA access without a genomics feature
 pipeline.
 
@@ -176,10 +176,7 @@ PyPeakRankR extends the R package PeakRankR, which used a minimal set of
 three features (ATAC specificity, signal magnitude, and peak coverage) in
 the BICCN Community Challenge [@Johansen2025]. PyPeakRankR re-implements
 and expands this approach in Python to integrate directly with sequence
-models and modern genomics workflows. In the BICCN challenge, PeakRankR
-ranked among the top three methods out of 16 competing approaches for
-predicting functional cell-type specific enhancers across 19 cortical cell
-types, with direct experimental validation via in vivo AAV screening.
+models and modern genomics workflows.
 
 In a recent basal ganglia study from our group [@Wirthlin2026], PyPeakRankR was used
 within the Cross-species Enhancer Ranking Pipeline (CERP) across multiple

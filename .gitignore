@@ -11,6 +11,7 @@ env/
 .env
 *.tsv
 *.bed
+!tests/test.bed
 *.bw
 *.fa
 *.fai
