@@ -145,47 +145,32 @@ PhyloP conservation, ATAC specificity, and signal distribution moments
 
 # Benchmarking against the BICCN challenge
 
-Sorting peaks by MACS2 [@Zhang2008] fold change ranks by signal strength
-but not specificity. ArchR [@Granja2021] ranks by differential accessibility
-(log2FC, FDR), capturing enrichment but without normalising signal across
-all background groups.
+PyPeakRankR's specificity-ratio approach was validated in the Brain
+Initiative Cell Census Network (BICCN) Community Challenge
+[@Johansen2025], where PeakRankR ranked third among 16 methods for
+predicting functional cell-type-specific enhancers across 19 cortical
+cell types. Figure 2 illustrates the approach using three validated L5
+extratelencephalic (ET) enhancers from that challenge.
 
-Figure 2 illustrates how PyPeakRankR's specificity metric differs from
-signal-magnitude approaches using three validated cortical
-enhancers from the Brain Initiative Cell Census Network (BICCN) Community
-Challenge [@Johansen2025], where PyPeakRankR ranked third among 16 methods.
-All three peaks target L5 extratelencephalic (ET) neurons in mouse motor
-cortex [@Johansen2025].
+The specificity metric correctly distinguishes peaks whose signal is
+concentrated in the target cell type (AiE0456m, Spec = 0.92; AiE0463m,
+Spec = 0.61) from peaks with comparable total signal spread across
+multiple cell types (AiE0460m, Spec = 0.18). In vivo AAV screening
+confirmed that the high-specificity peaks drove on-target expression
+while the low-specificity peak did not, demonstrating that the
+specificity ratio captures biologically meaningful enrichment that
+signal-magnitude ranking alone misses [@Johansen2025].
 
-AiE0456m has high ATAC-seq signal specifically in L5 ET neurons; both
-ArchR (rank #1) and PyPeakRankR (Spec=0.92) correctly prioritise it.
-
-AiE0460m has high total ATAC-seq signal — giving it ArchR rank #2 — but
-that signal is distributed across multiple cell types. PyPeakRankR's
-specificity ratio (target / mean background) correctly identifies it as
-non-specific (Spec=0.18) and deprioritises it.
-
-AiE0463m has low total ATAC-seq signal, placing it at ArchR rank #18.
-Yet almost all of that signal falls within L5 ET neurons; PyPeakRankR
-detects this concentration and assigns Spec=0.61, rescuing a peak that
-signal-magnitude approaches miss. Multiple POU3F1 motifs at this locus
-— the canonical transcription factor for L5 ET neurons — support its
-functional specificity [@Johansen2025].
-
-![Schematic ATAC-seq signal tracks across five cortical cell types for
-three validated L5 ET enhancers from the BICCN Community Challenge
+![ATAC-seq signal tracks across five cortical cell types for three
+validated L5 ET enhancers from the BICCN Community Challenge
 [@Johansen2025]. Each column shows per-cell-type read-pileup profiles;
-dashed vertical lines mark the MACS2 summit. AiE0456m shows high,
-L5 ET-specific signal (ArchR rank #1; PyPeakRankR Spec=0.92) and is
-correctly prioritised by both methods. AiE0460m shows comparable signal
-height across all five cell types — ArchR ranks it #2 by log2FC while
-PyPeakRankR's specificity ratio identifies it as non-specific (Spec=0.18).
-AiE0463m has low total signal — placing it at ArchR rank #18 — but its
-signal is nearly exclusive to L5 ET neurons; PyPeakRankR rescues it
-(Spec=0.61). In vivo validation from adeno-associated virus (AAV)
-screening in mouse motor cortex [@Johansen2025].](biccn_three_peaks.png)
-
-
+dashed vertical lines mark the MACS2 summit. AiE0456m and AiE0463m
+show signal concentrated in L5 ET neurons (Spec = 0.92 and 0.61,
+respectively), while AiE0460m shows comparable signal across all five
+cell types (Spec = 0.18). In vivo validation from adeno-associated
+virus (AAV) screening in mouse motor cortex confirmed on-target
+expression for the high-specificity peaks
+[@Johansen2025].](biccn_three_peaks.png)
 
 # Research impact statement
 
