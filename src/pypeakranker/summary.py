@@ -74,9 +74,6 @@ def summarize_peak(
         if allow_missing_chroms:
             return 0.0
         raise
-    except Exception:
-        # permissive: keep pipeline moving
-        return 0.0
 
 
 # -------------------------

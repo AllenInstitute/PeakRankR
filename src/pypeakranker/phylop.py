@@ -31,6 +31,7 @@ import subprocess
 import tempfile
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 import pyBigWig
 from pypeakranker._utils import log, ensure_parent_dir, load_peaks
@@ -74,6 +75,12 @@ def _run_liftover(
                 stderr=subprocess.PIPE,
                 text=True,
             )
+        except FileNotFoundError:
+            raise RuntimeError(
+                f"liftOver executable not found: {liftover_exe}\n"
+                f"Install it from https://hgdownload.soe.ucsc.edu/admin/exe/ "
+                f"or provide the correct path via --liftover-exe."
+            )
         except subprocess.CalledProcessError as e:
             raise RuntimeError(
                 f"liftOver failed.\nCMD: {' '.join(cmd)}\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}"
@@ -112,10 +119,10 @@ def _run_liftover(
 
 def _mean_bigwig(bw: pyBigWig.pyBigWig, chrom: str, start: int, end: int) -> float:
     try:
-        vals = bw.values(chrom, start, end)
-        vals = [v for v in vals if v is not None]
-        return float(sum(vals) / len(vals)) if vals else 0.0
-    except Exception:
+        vals = bw.values(chrom, start, end, numpy=True)
+        vals = vals[~np.isnan(vals)]
+        return float(vals.mean()) if vals.size > 0 else 0.0
+    except (RuntimeError, KeyError):
         return 0.0
 
 
@@ -285,76 +292,30 @@ def main() -> None:
     if args.peaks:
         peaks_df = load_peaks(args.peaks, quiet=args.quiet)
 
-        # Optionally liftOver before scoring
-        if args.chain:
-            peaks_df = _run_liftover(
-                peaks_df,
+        # Write peaks to a temp table, run add_phylop, done
+        import tempfile as _tmpmod
+
+        fd, tmp = _tmpmod.mkstemp(suffix=".tsv")
+        os.close(fd)
+        try:
+            peaks_df.to_csv(tmp, sep="\t", index=False)
+            add_phylop(
+                table_tsv=tmp,
+                phylop_bw=args.phylop_bw,
+                out_tsv=args.output,
                 chain_file=args.chain,
                 liftover_exe=args.liftover_exe,
+                allow_missing_chroms=args.allow_missing_chroms,
+                max_len=args.max_len,
                 quiet=args.quiet,
+                out_col=args.out_col,
+                keep_lifted_coords=not args.drop_lifted_coords,
             )
-            chr_c, start_c, end_c = "chr_target", "start_target", "end_target"
-        else:
-            chr_c, start_c, end_c = "chr", "start", "end"
-
-        log(f"Opening PhyloP bigWig: {args.phylop_bw}", args.quiet)
-        bw = pyBigWig.open(args.phylop_bw)
-
-        scores = []
-        missing = 0
-        too_long = 0
-        for _, row in peaks_df.iterrows():
-            chrom = row.get(chr_c)
-            if pd.isna(chrom):
-                missing += 1
-                scores.append(0.0)
-                continue
-
-            start = int(row[start_c])
-            end = int(row[end_c])
-
-            if end <= start:
-                scores.append(0.0)
-                continue
-
-            if (end - start) > args.max_len:
-                too_long += 1
-                scores.append(0.0)
-                continue
-
+        finally:
             try:
-                scores.append(_mean_bigwig(bw, str(chrom), start, end))
-            except RuntimeError:
-                missing += 1
-                if args.allow_missing_chroms:
-                    scores.append(0.0)
-                else:
-                    raise
-
-        bw.close()
-
-        if missing and not args.quiet:
-            log(
-                f"Warning: {missing} peaks missing target coordinates or chrom not in bigWig; filled as 0.",
-                args.quiet,
-            )
-        if too_long and not args.quiet:
-            log(
-                f"Warning: {too_long} peaks exceeded max_len={args.max_len}; filled as 0.",
-                args.quiet,
-            )
-
-        out_df = peaks_df.copy()
-        out_df[args.out_col] = scores
-        if args.chain and args.drop_lifted_coords:
-            out_df = out_df.drop(
-                columns=["chr_target", "start_target", "end_target"], errors="ignore"
-            )
-
-        ensure_parent_dir(args.output)
-        out_df.to_csv(args.output, sep="\t", index=False)
-        log(f"Wrote PhyloP table: {args.output}", args.quiet)
-
+                os.remove(tmp)
+            except OSError:
+                pass
     else:
         add_phylop(
             table_tsv=args.table,

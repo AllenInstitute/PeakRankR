@@ -15,6 +15,7 @@ python -m pypeakranker.gc --peaks ... --reference-fasta ... --output ...
 from __future__ import annotations
 
 import argparse
+import os
 
 import pandas as pd
 from pyfaidx import Fasta
@@ -76,8 +77,6 @@ def add_gc(
                     f"Chromosome '{chrom}' not found in FASTA. "
                     f"Re-run with --allow-missing-chroms to fill as NA."
                 )
-        except Exception:
-            gc_vals.append(pd.NA)
 
     if missing and not quiet:
         log(f"Warning: {missing} peaks had chromosomes not found in FASTA.", quiet)
@@ -126,39 +125,27 @@ def main() -> None:
         raise SystemExit("Provide exactly one of --peaks OR --table")
 
     if args.peaks:
+        # Write peaks to a temp table, run add_gc, done
         peaks_df = load_peaks(args.peaks, quiet=args.quiet)
-        log(f"Loading FASTA: {args.reference_fasta}", args.quiet)
-        fasta = Fasta(args.reference_fasta)
 
-        gc_vals = []
-        missing = 0
-        for _, row in peaks_df.iterrows():
-            chrom = str(row["chr"])
-            start = int(row["start"])
-            end = int(row["end"])
-            try:
-                seq = fasta[chrom][start:end].seq
-                gc_vals.append(gc_fraction(seq))
-            except KeyError:
-                missing += 1
-                if args.allow_missing_chroms:
-                    gc_vals.append(pd.NA)
-                else:
-                    raise
-            except Exception:
-                gc_vals.append(pd.NA)
+        import tempfile as _tmpmod
 
-        if missing and not args.quiet:
-            log(
-                f"Warning: {missing} peaks had chromosomes not found in FASTA.",
-                args.quiet,
+        fd, tmp = _tmpmod.mkstemp(suffix=".tsv")
+        os.close(fd)
+        try:
+            peaks_df.to_csv(tmp, sep="\t", index=False)
+            add_gc(
+                table_tsv=tmp,
+                reference_fasta=args.reference_fasta,
+                out_tsv=args.output,
+                allow_missing_chroms=args.allow_missing_chroms,
+                quiet=args.quiet,
             )
-
-        out_df = peaks_df.copy()
-        out_df["GC_content"] = gc_vals
-        ensure_parent_dir(args.output)
-        out_df.to_csv(args.output, sep="\t", index=False)
-        log(f"Wrote GC table: {args.output}", args.quiet)
+        finally:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
 
     else:
         add_gc(

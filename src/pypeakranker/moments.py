@@ -59,8 +59,6 @@ def get_per_base_signal(
         if allow_missing_chroms:
             return np.array([], dtype=float)
         raise
-    except Exception:
-        return np.array([], dtype=float)
 
 
 def bimodality_coefficient(vals: np.ndarray) -> float:
@@ -202,16 +200,25 @@ def main() -> None:
     if args.peaks:
         peaks_df = load_peaks(args.peaks, quiet=args.quiet)
 
-        # Write peaks as a "table" then reuse add_moments logic for consistent output
-        with tempfile_named_tsv(peaks_df) as tmp_table:
+        import tempfile as _tmpmod
+
+        fd, tmp = _tmpmod.mkstemp(suffix=".tsv")
+        os.close(fd)
+        try:
+            peaks_df.to_csv(tmp, sep="\t", index=False)
             add_moments(
-                table_tsv=tmp_table,
+                table_tsv=tmp,
                 bigwig_files=bw_files,
                 out_tsv=args.output,
                 allow_missing_chroms=args.allow_missing_chroms,
                 quiet=args.quiet,
                 prefix=args.prefix,
             )
+        finally:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
     else:
         add_moments(
             table_tsv=args.table,
@@ -221,29 +228,6 @@ def main() -> None:
             quiet=args.quiet,
             prefix=args.prefix,
         )
-
-
-# helper context manager to avoid importing tempfile at top unless needed
-class tempfile_named_tsv:
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
-        self.path = None
-
-    def __enter__(self) -> str:
-        import tempfile
-
-        fd, path = tempfile.mkstemp(suffix=".tsv")
-        os.close(fd)
-        self.df.to_csv(path, sep="\t", index=False)
-        self.path = path
-        return path
-
-    def __exit__(self, exc_type, exc, tb) -> None:
-        try:
-            if self.path and os.path.exists(self.path):
-                os.remove(self.path)
-        except Exception:
-            pass
 
 
 if __name__ == "__main__":

@@ -91,7 +91,7 @@ def rank_by_specificity(
     df = pd.read_csv(table_tsv, sep="\t")
     needed = {"chr", "start", "end"}
     if not needed.issubset(df.columns):
-        raise ValueError(f"Table must contain columns {needed!r}")
+        raise ValueError(f"Table must contain columns {needed}")
 
     # Validate columns exist
     missing_target = [c for c in target_cols if c not in df.columns]
@@ -154,18 +154,19 @@ def rank_by_specificity(
     ensure_parent_dir(out_tsv)
     out.to_csv(out_tsv, sep="\t", index=False)
     log(f"Wrote ranked table: {out_tsv}", quiet)
-    log(
-        f"Top peak: {out.iloc[0]['chr']}:{out.iloc[0]['start']}-{out.iloc[0]['end']}  "
-        f"specificity={out.iloc[0][specificity_col]:.4f}",
-        quiet,
-    )
+    if len(out) > 0:
+        log(
+            f"Top peak: {out.iloc[0]['chr']}:{out.iloc[0]['start']}-{out.iloc[0]['end']}  "
+            f"specificity={out.iloc[0][specificity_col]:.4f}",
+            quiet,
+        )
 
     return out
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Standalone CLI
-# ─────────────────────────────────────────────────────────────────────────────
+# -------------------------
+# Standalone script CLI
+# -------------------------
 
 
 def build_parser() -> argparse.ArgumentParser:
