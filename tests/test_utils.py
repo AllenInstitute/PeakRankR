@@ -3,7 +3,6 @@
 Tests for pypeakranker._utils helper functions.
 """
 
-import pandas as pd
 import pytest
 
 from pypeakranker._utils import load_peaks, log, ensure_parent_dir
@@ -73,6 +72,7 @@ def test_ensure_parent_dir(tmp_path):
     path = str(tmp_path / "a" / "b" / "output.tsv")
     ensure_parent_dir(path)
     import os
+
     assert os.path.isdir(str(tmp_path / "a" / "b"))
 
 

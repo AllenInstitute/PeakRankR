@@ -15,22 +15,41 @@ def build_parser():
     # init
     # -------------------------
     p_init = sub.add_parser("init", help="Initialize a feature table from peaks")
-    p_init.add_argument("--peaks", required=True, help="Peaks BED/TSV (>=3 cols, headerless)")
+    p_init.add_argument(
+        "--peaks", required=True, help="Peaks BED/TSV (>=3 cols, headerless)"
+    )
     p_init.add_argument("--out", required=True, help="Output TSV (feature table)")
     p_init.add_argument("--quiet", action="store_true")
 
     # -------------------------
     # add-signal
     # -------------------------
-    p_sig = sub.add_parser("add-signal", help="Add BigWig signal summaries to feature table")
+    p_sig = sub.add_parser(
+        "add-signal", help="Add BigWig signal summaries to feature table"
+    )
     p_sig.add_argument("--table", required=True, help="Existing feature table TSV")
     p_sig.add_argument("--bigwig-files", nargs="+", required=True, help="BigWig files")
-    p_sig.add_argument("--out", required=True, help="Output TSV (can overwrite same file)")
-    p_sig.add_argument("--stat", default="sum", choices=["sum", "mean", "max"], help="Summary statistic")
-    p_sig.add_argument("--suffix", default="summary", help="Suffix for new columns (e.g., summary)")
-    p_sig.add_argument("--sample-name-mode", default="stem", choices=["stem", "filename"])
+    p_sig.add_argument(
+        "--out", required=True, help="Output TSV (can overwrite same file)"
+    )
+    p_sig.add_argument(
+        "--stat",
+        default="sum",
+        choices=["sum", "mean", "max"],
+        help="Summary statistic",
+    )
+    p_sig.add_argument(
+        "--suffix", default="summary", help="Suffix for new columns (e.g., summary)"
+    )
+    p_sig.add_argument(
+        "--sample-name-mode", default="stem", choices=["stem", "filename"]
+    )
     p_sig.add_argument("--keep-nans", action="store_true")
-    p_sig.add_argument("--allow-missing-chroms", action="store_true", help="Missing chrom -> 0 instead of error")
+    p_sig.add_argument(
+        "--allow-missing-chroms",
+        action="store_true",
+        help="Missing chrom -> 0 instead of error",
+    )
     p_sig.add_argument("--quiet", action="store_true")
 
     # -------------------------
@@ -39,8 +58,14 @@ def build_parser():
     p_gc = sub.add_parser("add-gc", help="Add GC content to feature table")
     p_gc.add_argument("--table", required=True, help="Existing feature table TSV")
     p_gc.add_argument("--reference-fasta", required=True, help="Reference FASTA")
-    p_gc.add_argument("--out", required=True, help="Output TSV (can overwrite same file)")
-    p_gc.add_argument("--allow-missing-chroms", action="store_true", help="Missing chrom -> NA instead of error")
+    p_gc.add_argument(
+        "--out", required=True, help="Output TSV (can overwrite same file)"
+    )
+    p_gc.add_argument(
+        "--allow-missing-chroms",
+        action="store_true",
+        help="Missing chrom -> NA instead of error",
+    )
     p_gc.add_argument("--quiet", action="store_true")
 
     # -------------------------
@@ -48,43 +73,94 @@ def build_parser():
     # -------------------------
     p_phy = sub.add_parser("add-phylop", help="Add mean PhyloP score to feature table")
     p_phy.add_argument("--table", required=True, help="Existing feature table TSV")
-    p_phy.add_argument("--phylop-bw", required=True, help="PhyloP bigWig (TARGET assembly)")
-    p_phy.add_argument("--out", required=True, help="Output TSV (can overwrite same file)")
-    p_phy.add_argument("--chain", help="UCSC chain file for source->target liftOver (optional)")
-    p_phy.add_argument("--liftover-exe", default="liftOver", help="Path to UCSC liftOver binary")
-    p_phy.add_argument("--allow-missing-chroms", action="store_true", help="Missing chrom -> 0 instead of error")
-    p_phy.add_argument("--max-len", type=int, default=5000, help="Intervals longer than this get 0")
-    p_phy.add_argument("--out-col", default="phyloP_mean", help="Name of appended PhyloP column")
-    p_phy.add_argument("--drop-lifted-coords", action="store_true", help="Drop chr_target/start_target/end_target")
+    p_phy.add_argument(
+        "--phylop-bw", required=True, help="PhyloP bigWig (TARGET assembly)"
+    )
+    p_phy.add_argument(
+        "--out", required=True, help="Output TSV (can overwrite same file)"
+    )
+    p_phy.add_argument(
+        "--chain", help="UCSC chain file for source->target liftOver (optional)"
+    )
+    p_phy.add_argument(
+        "--liftover-exe", default="liftOver", help="Path to UCSC liftOver binary"
+    )
+    p_phy.add_argument(
+        "--allow-missing-chroms",
+        action="store_true",
+        help="Missing chrom -> 0 instead of error",
+    )
+    p_phy.add_argument(
+        "--max-len", type=int, default=5000, help="Intervals longer than this get 0"
+    )
+    p_phy.add_argument(
+        "--out-col", default="phyloP_mean", help="Name of appended PhyloP column"
+    )
+    p_phy.add_argument(
+        "--drop-lifted-coords",
+        action="store_true",
+        help="Drop chr_target/start_target/end_target",
+    )
     p_phy.add_argument("--quiet", action="store_true")
 
     # -------------------------
     # add-moments
     # -------------------------
-    p_mom = sub.add_parser("add-moments", help="Add skewness/kurtosis/bimodality per BigWig to feature table")
+    p_mom = sub.add_parser(
+        "add-moments",
+        help="Add skewness/kurtosis/bimodality per BigWig to feature table",
+    )
     p_mom.add_argument("--table", required=True, help="Existing feature table TSV")
     p_mom.add_argument("--bigwig-files", nargs="+", required=True, help="BigWig files")
-    p_mom.add_argument("--out", required=True, help="Output TSV (can overwrite same file)")
-    p_mom.add_argument("--prefix", default="", help="Optional prefix for appended columns")
-    p_mom.add_argument("--allow-missing-chroms", action="store_true", help="Missing chrom -> NaN metrics instead of error")
+    p_mom.add_argument(
+        "--out", required=True, help="Output TSV (can overwrite same file)"
+    )
+    p_mom.add_argument(
+        "--prefix", default="", help="Optional prefix for appended columns"
+    )
+    p_mom.add_argument(
+        "--allow-missing-chroms",
+        action="store_true",
+        help="Missing chrom -> NaN metrics instead of error",
+    )
     p_mom.add_argument("--quiet", action="store_true")
 
     # -------------------------
     # rank-specificity
     # -------------------------
     p_rank = sub.add_parser("rank-specificity", help="Rank peaks by ATAC specificity")
-    p_rank.add_argument("--table", required=True, help="Feature table TSV (must have chr/start/end and signal columns)")
-    p_rank.add_argument("--target-cols", nargs="+", required=True,
-                        help="Signal column(s) for the target group")
-    p_rank.add_argument("--background-cols", nargs="+", required=True,
-                        help="Signal columns for ALL groups including target")
+    p_rank.add_argument(
+        "--table",
+        required=True,
+        help="Feature table TSV (must have chr/start/end and signal columns)",
+    )
+    p_rank.add_argument(
+        "--target-cols",
+        nargs="+",
+        required=True,
+        help="Signal column(s) for the target group",
+    )
+    p_rank.add_argument(
+        "--background-cols",
+        nargs="+",
+        required=True,
+        help="Signal columns for ALL groups including target",
+    )
     p_rank.add_argument("--out", required=True, help="Output TSV path")
-    p_rank.add_argument("--target-agg", default="mean", choices=["mean", "sum"],
-                        help="How to aggregate multiple --target-cols (default: mean)")
-    p_rank.add_argument("--specificity-col", default="specificity_score",
-                        help="Name for the specificity score column")
-    p_rank.add_argument("--rank-col", default="specificity_rank",
-                        help="Name for the rank column")
+    p_rank.add_argument(
+        "--target-agg",
+        default="mean",
+        choices=["mean", "sum"],
+        help="How to aggregate multiple --target-cols (default: mean)",
+    )
+    p_rank.add_argument(
+        "--specificity-col",
+        default="specificity_score",
+        help="Name for the specificity score column",
+    )
+    p_rank.add_argument(
+        "--rank-col", default="specificity_rank", help="Name for the rank column"
+    )
     p_rank.add_argument("--quiet", action="store_true")
 
     return p
@@ -135,14 +211,14 @@ def main():
 
     elif args.cmd == "rank-specificity":
         rank_by_specificity(
-            table_tsv       = args.table,
-            target_cols     = args.target_cols,
-            background_cols = args.background_cols,
-            out_tsv         = args.out,
-            target_agg      = args.target_agg,
-            specificity_col = args.specificity_col,
-            rank_col        = args.rank_col,
-            quiet           = args.quiet,
+            table_tsv=args.table,
+            target_cols=args.target_cols,
+            background_cols=args.background_cols,
+            out_tsv=args.out,
+            target_agg=args.target_agg,
+            specificity_col=args.specificity_col,
+            rank_col=args.rank_col,
+            quiet=args.quiet,
         )
 
     elif args.cmd == "add-moments":

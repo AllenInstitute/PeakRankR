@@ -8,8 +8,6 @@ without requiring real BigWig files (except where noted).
 import subprocess
 import sys
 
-import pytest
-
 
 def test_cli_help():
     """pypeakranker --help exits 0."""
@@ -30,10 +28,14 @@ def test_cli_init_subcommand(tmp_path):
 
     result = subprocess.run(
         [
-            sys.executable, "-m", "pypeakranker.cli",
+            sys.executable,
+            "-m",
+            "pypeakranker.cli",
             "init",
-            "--peaks", str(peaks),
-            "--out", str(out),
+            "--peaks",
+            str(peaks),
+            "--out",
+            str(out),
             "--quiet",
         ],
         capture_output=True,
@@ -43,6 +45,7 @@ def test_cli_init_subcommand(tmp_path):
     assert out.exists()
 
     import pandas as pd
+
     df = pd.read_csv(out, sep="\t")
     assert list(df.columns[:3]) == ["chr", "start", "end"]
     assert len(df) == 2
@@ -60,12 +63,19 @@ def test_cli_rank_specificity_subcommand(tmp_path):
 
     result = subprocess.run(
         [
-            sys.executable, "-m", "pypeakranker.cli",
+            sys.executable,
+            "-m",
+            "pypeakranker.cli",
             "rank-specificity",
-            "--table", str(table),
-            "--target-cols", "A_mean",
-            "--background-cols", "A_mean", "B_mean",
-            "--out", str(out),
+            "--table",
+            str(table),
+            "--target-cols",
+            "A_mean",
+            "--background-cols",
+            "A_mean",
+            "B_mean",
+            "--out",
+            str(out),
             "--quiet",
         ],
         capture_output=True,
@@ -75,6 +85,7 @@ def test_cli_rank_specificity_subcommand(tmp_path):
     assert out.exists()
 
     import pandas as pd
+
     df = pd.read_csv(out, sep="\t")
     assert "specificity_score" in df.columns
     assert "specificity_rank" in df.columns

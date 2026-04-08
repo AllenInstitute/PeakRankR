@@ -28,6 +28,7 @@ from pypeakranker._utils import log, ensure_parent_dir, load_peaks
 # Shared helpers
 # -------------------------
 
+
 def sample_name(path: str, mode: str = "stem") -> str:
     base = os.path.basename(path)
     if mode == "filename":
@@ -82,6 +83,7 @@ def summarize_peak(
 # Package API
 # -------------------------
 
+
 def init_table(peaks_path: str, out_tsv: str, quiet: bool = False) -> None:
     """Initialize a feature table TSV from peaks."""
     df = load_peaks(peaks_path, quiet=quiet)
@@ -111,7 +113,9 @@ def add_signal(
         raise ValueError(f"Table must contain columns {needed}")
 
     if base.duplicated(["chr", "start", "end"]).any():
-        raise ValueError("Table has duplicate (chr,start,end) rows; cannot merge safely.")
+        raise ValueError(
+            "Table has duplicate (chr,start,end) rows; cannot merge safely."
+        )
 
     out = base.copy()
 
@@ -139,7 +143,9 @@ def add_signal(
     log(f"Wrote table with signal columns: {out_tsv}", quiet)
 
 
-def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], pattern: str) -> List[str]:
+def _list_bigwigs(
+    bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], pattern: str
+) -> List[str]:
     if bigwig_files:
         files = list(bigwig_files)
     else:
@@ -151,12 +157,16 @@ def _list_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]], 
             files.extend(glob(os.path.join(bigwig_dir, pat)))
     files = sorted(set(files))
     if not files:
-        raise FileNotFoundError("No BigWig files found. Check --bigwig-dir/--bigwig-files and --pattern.")
+        raise FileNotFoundError(
+            "No BigWig files found. Check --bigwig-dir/--bigwig-files and --pattern."
+        )
     return files
+
 
 # -------------------------
 # Standalone script CLI
 # -------------------------
+
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
@@ -165,17 +175,27 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     p.add_argument("--peaks", help="Peaks BED/TSV (headerless).")
-    p.add_argument("--table", help="Existing feature table TSV (must have chr/start/end).")
+    p.add_argument(
+        "--table", help="Existing feature table TSV (must have chr/start/end)."
+    )
 
     bw_src = p.add_mutually_exclusive_group(required=True)
     bw_src.add_argument("--bigwig-dir", help="Directory containing BigWig files.")
-    bw_src.add_argument("--bigwig-files", nargs="+", help="One or more BigWig file paths.")
+    bw_src.add_argument(
+        "--bigwig-files", nargs="+", help="One or more BigWig file paths."
+    )
 
-    p.add_argument("--pattern", default="*.bw,*.bigWig,*.bigwig", help="Glob patterns for --bigwig-dir.")
+    p.add_argument(
+        "--pattern",
+        default="*.bw,*.bigWig,*.bigwig",
+        help="Glob patterns for --bigwig-dir.",
+    )
     p.add_argument("--output", required=True, help="Output TSV path.")
     p.add_argument("--stat", choices=["sum", "mean", "max"], default="sum")
     p.add_argument("--sample-name-mode", choices=["stem", "filename"], default="stem")
-    p.add_argument("--suffix", default="summary", help="Name columns <sample>_<suffix>.")
+    p.add_argument(
+        "--suffix", default="summary", help="Name columns <sample>_<suffix>."
+    )
     p.add_argument("--keep-nans", action="store_true")
     p.add_argument("--allow-missing-chroms", action="store_true")
     p.add_argument("--quiet", action="store_true")
@@ -193,6 +213,7 @@ def main() -> None:
     if args.peaks:
         # peaks -> init table -> add_signal
         import tempfile
+
         fd, tmp = tempfile.mkstemp(suffix=".tsv")
         os.close(fd)
         try:

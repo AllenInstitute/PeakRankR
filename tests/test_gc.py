@@ -25,6 +25,7 @@ class TestGcFraction:
 
     def test_empty_string(self):
         import math
+
         assert math.isnan(gc_fraction(""))
 
 

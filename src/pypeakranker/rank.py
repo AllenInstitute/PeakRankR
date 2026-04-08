@@ -29,8 +29,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
-import os
-from typing import List, Optional
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -147,7 +146,7 @@ def rank_by_specificity(
 
     out = df.copy()
     out[specificity_col] = spec_score.values
-    out[rank_col]        = spec_rank.values
+    out[rank_col] = spec_rank.values
 
     # Sort by rank
     out = out.sort_values(rank_col).reset_index(drop=True)
@@ -155,8 +154,11 @@ def rank_by_specificity(
     ensure_parent_dir(out_tsv)
     out.to_csv(out_tsv, sep="\t", index=False)
     log(f"Wrote ranked table: {out_tsv}", quiet)
-    log(f"Top peak: {out.iloc[0]['chr']}:{out.iloc[0]['start']}-{out.iloc[0]['end']}  "
-        f"specificity={out.iloc[0][specificity_col]:.4f}", quiet)
+    log(
+        f"Top peak: {out.iloc[0]['chr']}:{out.iloc[0]['start']}-{out.iloc[0]['end']}  "
+        f"specificity={out.iloc[0][specificity_col]:.4f}",
+        quiet,
+    )
 
     return out
 
@@ -164,6 +166,7 @@ def rank_by_specificity(
 # ─────────────────────────────────────────────────────────────────────────────
 # Standalone CLI
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
@@ -176,21 +179,41 @@ def build_parser() -> argparse.ArgumentParser:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("--table", required=True,
-                   help="Feature table TSV (must contain chr/start/end and signal columns).")
-    p.add_argument("--target-cols", nargs="+", required=True,
-                   help="Signal column(s) for the TARGET group (e.g. Astrocytes-1_mean).")
-    p.add_argument("--background-cols", nargs="+", required=True,
-                   help="Signal columns for ALL groups including target "
-                        "(e.g. Astrocytes-1_mean Neurons_mean Oligo_mean).")
-    p.add_argument("--out", required=True,
-                   help="Output TSV path.")
-    p.add_argument("--target-agg", default="mean", choices=["mean", "sum"],
-                   help="How to aggregate multiple --target-cols. Default: mean.")
-    p.add_argument("--specificity-col", default="specificity_score",
-                   help="Name of the appended specificity score column.")
-    p.add_argument("--rank-col", default="specificity_rank",
-                   help="Name of the appended rank column.")
+    p.add_argument(
+        "--table",
+        required=True,
+        help="Feature table TSV (must contain chr/start/end and signal columns).",
+    )
+    p.add_argument(
+        "--target-cols",
+        nargs="+",
+        required=True,
+        help="Signal column(s) for the TARGET group (e.g. Astrocytes-1_mean).",
+    )
+    p.add_argument(
+        "--background-cols",
+        nargs="+",
+        required=True,
+        help="Signal columns for ALL groups including target "
+        "(e.g. Astrocytes-1_mean Neurons_mean Oligo_mean).",
+    )
+    p.add_argument("--out", required=True, help="Output TSV path.")
+    p.add_argument(
+        "--target-agg",
+        default="mean",
+        choices=["mean", "sum"],
+        help="How to aggregate multiple --target-cols. Default: mean.",
+    )
+    p.add_argument(
+        "--specificity-col",
+        default="specificity_score",
+        help="Name of the appended specificity score column.",
+    )
+    p.add_argument(
+        "--rank-col",
+        default="specificity_rank",
+        help="Name of the appended rank column.",
+    )
     p.add_argument("--quiet", action="store_true")
     return p
 
@@ -198,14 +221,14 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     rank_by_specificity(
-        table_tsv       = args.table,
-        target_cols     = args.target_cols,
-        background_cols = args.background_cols,
-        out_tsv         = args.out,
-        target_agg      = args.target_agg,
-        specificity_col = args.specificity_col,
-        rank_col        = args.rank_col,
-        quiet           = args.quiet,
+        table_tsv=args.table,
+        target_cols=args.target_cols,
+        background_cols=args.background_cols,
+        out_tsv=args.out,
+        target_agg=args.target_agg,
+        specificity_col=args.specificity_col,
+        rank_col=args.rank_col,
+        quiet=args.quiet,
     )
 
 

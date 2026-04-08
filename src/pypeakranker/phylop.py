@@ -29,7 +29,7 @@ import argparse
 import os
 import subprocess
 import tempfile
-from typing import Optional, Tuple
+from typing import Optional
 
 import pandas as pd
 import pyBigWig
@@ -67,7 +67,13 @@ def _run_liftover(
         log(f"Running liftOver: {' '.join(cmd)}", quiet)
 
         try:
-            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            subprocess.run(
+                cmd,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
         except subprocess.CalledProcessError as e:
             raise RuntimeError(
                 f"liftOver failed.\nCMD: {' '.join(cmd)}\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}"
@@ -117,6 +123,7 @@ def _mean_bigwig(bw: pyBigWig.pyBigWig, chrom: str, start: int, end: int) -> flo
 # Package API
 # -------------------------
 
+
 def add_phylop(
     table_tsv: str,
     phylop_bw: str,
@@ -142,12 +149,16 @@ def add_phylop(
         raise ValueError(f"Table must contain columns {needed}")
 
     if base.duplicated(["chr", "start", "end"]).any():
-        raise ValueError("Table has duplicate (chr,start,end) rows; cannot merge safely.")
+        raise ValueError(
+            "Table has duplicate (chr,start,end) rows; cannot merge safely."
+        )
 
     work = base.copy()
 
     if chain_file:
-        work = _run_liftover(work, chain_file=chain_file, liftover_exe=liftover_exe, quiet=quiet)
+        work = _run_liftover(
+            work, chain_file=chain_file, liftover_exe=liftover_exe, quiet=quiet
+        )
         chr_c, start_c, end_c = "chr_target", "start_target", "end_target"
     else:
         chr_c, start_c, end_c = "chr", "start", "end"
@@ -191,15 +202,22 @@ def add_phylop(
     bw.close()
 
     if missing and not quiet:
-        log(f"Warning: {missing} peaks missing target coordinates or chrom not in bigWig; filled as 0.", quiet)
+        log(
+            f"Warning: {missing} peaks missing target coordinates or chrom not in bigWig; filled as 0.",
+            quiet,
+        )
     if too_long and not quiet:
-        log(f"Warning: {too_long} peaks exceeded max_len={max_len}; filled as 0.", quiet)
+        log(
+            f"Warning: {too_long} peaks exceeded max_len={max_len}; filled as 0.", quiet
+        )
 
     out = work.copy()
     out[out_col] = scores
 
     if chain_file and not keep_lifted_coords:
-        out = out.drop(columns=["chr_target", "start_target", "end_target"], errors="ignore")
+        out = out.drop(
+            columns=["chr_target", "start_target", "end_target"], errors="ignore"
+        )
 
     ensure_parent_dir(out_tsv)
     out.to_csv(out_tsv, sep="\t", index=False)
@@ -210,6 +228,7 @@ def add_phylop(
 # Standalone script CLI
 # -------------------------
 
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="Compute mean PhyloP per peak from a PhyloP bigWig (optionally using liftOver).",
@@ -217,19 +236,42 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # Backward-compatible standalone mode (peaks -> phyloP table)
-    p.add_argument("--peaks", help="Peaks BED/TSV (headerless). Must have >=3 columns: chr, start, end.")
+    p.add_argument(
+        "--peaks",
+        help="Peaks BED/TSV (headerless). Must have >=3 columns: chr, start, end.",
+    )
 
     # Table mode (table -> table)
-    p.add_argument("--table", help="Existing feature table TSV (must have chr/start/end).")
+    p.add_argument(
+        "--table", help="Existing feature table TSV (must have chr/start/end)."
+    )
 
-    p.add_argument("--phylop-bw", required=True, help="PhyloP bigWig in the TARGET assembly.")
+    p.add_argument(
+        "--phylop-bw", required=True, help="PhyloP bigWig in the TARGET assembly."
+    )
     p.add_argument("--output", required=True, help="Output TSV path.")
-    p.add_argument("--chain", help="UCSC chain file for source->target liftOver (optional).")
-    p.add_argument("--liftover-exe", default="liftOver", help="Path to UCSC liftOver binary.")
-    p.add_argument("--allow-missing-chroms", action="store_true", help="Missing chrom -> 0 instead of error.")
-    p.add_argument("--max-len", type=int, default=5000, help="Intervals longer than this get 0.")
-    p.add_argument("--out-col", default="phyloP_mean", help="Name of appended PhyloP column.")
-    p.add_argument("--drop-lifted-coords", action="store_true", help="Do not keep lifted target coords.")
+    p.add_argument(
+        "--chain", help="UCSC chain file for source->target liftOver (optional)."
+    )
+    p.add_argument(
+        "--liftover-exe", default="liftOver", help="Path to UCSC liftOver binary."
+    )
+    p.add_argument(
+        "--allow-missing-chroms",
+        action="store_true",
+        help="Missing chrom -> 0 instead of error.",
+    )
+    p.add_argument(
+        "--max-len", type=int, default=5000, help="Intervals longer than this get 0."
+    )
+    p.add_argument(
+        "--out-col", default="phyloP_mean", help="Name of appended PhyloP column."
+    )
+    p.add_argument(
+        "--drop-lifted-coords",
+        action="store_true",
+        help="Do not keep lifted target coords.",
+    )
     p.add_argument("--quiet", action="store_true")
     return p
 
@@ -246,7 +288,10 @@ def main() -> None:
         # Optionally liftOver before scoring
         if args.chain:
             peaks_df = _run_liftover(
-                peaks_df, chain_file=args.chain, liftover_exe=args.liftover_exe, quiet=args.quiet
+                peaks_df,
+                chain_file=args.chain,
+                liftover_exe=args.liftover_exe,
+                quiet=args.quiet,
             )
             chr_c, start_c, end_c = "chr_target", "start_target", "end_target"
         else:
@@ -289,14 +334,22 @@ def main() -> None:
         bw.close()
 
         if missing and not args.quiet:
-            log(f"Warning: {missing} peaks missing target coordinates or chrom not in bigWig; filled as 0.", args.quiet)
+            log(
+                f"Warning: {missing} peaks missing target coordinates or chrom not in bigWig; filled as 0.",
+                args.quiet,
+            )
         if too_long and not args.quiet:
-            log(f"Warning: {too_long} peaks exceeded max_len={args.max_len}; filled as 0.", args.quiet)
+            log(
+                f"Warning: {too_long} peaks exceeded max_len={args.max_len}; filled as 0.",
+                args.quiet,
+            )
 
         out_df = peaks_df.copy()
         out_df[args.out_col] = scores
         if args.chain and args.drop_lifted_coords:
-            out_df = out_df.drop(columns=["chr_target", "start_target", "end_target"], errors="ignore")
+            out_df = out_df.drop(
+                columns=["chr_target", "start_target", "end_target"], errors="ignore"
+            )
 
         ensure_parent_dir(args.output)
         out_df.to_csv(args.output, sep="\t", index=False)

@@ -56,7 +56,9 @@ def test_add_signal_missing_bigwig_raises(tmp_path):
             out_tsv=str(tmp_path / "out.tsv"),
         )
 
+
 # ── rank_by_specificity ───────────────────────────────────────────────────
+
 
 def test_rank_by_specificity_basic(tmp_path):
     """Rank peaks by specificity — peak with highest target/bg ratio gets rank 1."""
@@ -73,6 +75,7 @@ def test_rank_by_specificity_basic(tmp_path):
     )
 
     from pypeakranker.rank import rank_by_specificity
+
     out = rank_by_specificity(
         table_tsv=str(table),
         target_cols=["A_mean"],
@@ -86,7 +89,7 @@ def test_rank_by_specificity_basic(tmp_path):
     assert out["specificity_score"].between(0, 1).all()
     # Rank 1 should be the peak most specific to A
     top = out[out["specificity_rank"] == 1].iloc[0]
-    assert top["start"] == 0   # peak 0 is most specific to A
+    assert top["start"] == 0  # peak 0 is most specific to A
     assert top["specificity_score"] == pytest.approx(1.0)
 
 
@@ -99,6 +102,7 @@ def test_rank_by_specificity_uniform_signal(tmp_path):
         "chr1\t100\t200\t1.0\t1.0\n"
     )
     from pypeakranker.rank import rank_by_specificity
+
     out = rank_by_specificity(
         table_tsv=str(table),
         target_cols=["A_mean"],
@@ -112,11 +116,9 @@ def test_rank_by_specificity_uniform_signal(tmp_path):
 def test_rank_by_specificity_missing_column_raises(tmp_path):
     """Asking for a column not in the table should raise ValueError."""
     table = tmp_path / "features.tsv"
-    table.write_text(
-        "chr\tstart\tend\tA_mean\n"
-        "chr1\t0\t100\t1.0\n"
-    )
+    table.write_text("chr\tstart\tend\tA_mean\n" "chr1\t0\t100\t1.0\n")
     from pypeakranker.rank import rank_by_specificity
+
     with pytest.raises(ValueError, match="not found in table"):
         rank_by_specificity(
             table_tsv=str(table),
@@ -136,6 +138,7 @@ def test_rank_by_specificity_zero_background(tmp_path):
         "chr1\t100\t200\t1.0\t0.0\n"
     )
     from pypeakranker.rank import rank_by_specificity
+
     out = rank_by_specificity(
         table_tsv=str(table),
         target_cols=["A_mean"],
@@ -156,6 +159,7 @@ def test_rank_by_specificity_multiple_target_cols(tmp_path):
         "chr1\t100\t200\t0.2\t0.1\t0.9\n"
     )
     from pypeakranker.rank import rank_by_specificity
+
     out = rank_by_specificity(
         table_tsv=str(table),
         target_cols=["A1_mean", "A2_mean"],

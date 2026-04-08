@@ -29,7 +29,9 @@ from scipy.stats import kurtosis, skew
 from pypeakranker._utils import log, ensure_parent_dir, load_peaks
 
 
-def resolve_bigwigs(bigwig_dir: Optional[str], bigwig_files: Optional[List[str]]) -> List[str]:
+def resolve_bigwigs(
+    bigwig_dir: Optional[str], bigwig_files: Optional[List[str]]
+) -> List[str]:
     if (bigwig_dir is None) == (bigwig_files is None):
         raise SystemExit("Provide exactly one of --bigwig-dir OR --bigwig-files")
 
@@ -78,12 +80,17 @@ def _metrics_for_interval(vals: np.ndarray) -> Tuple[float, float, float]:
         return (np.nan, np.nan, np.nan)
     if np.all(vals == 0) or np.all(vals == vals[0]):
         return (0.0, 0.0, np.nan)
-    return (float(skew(vals)), float(kurtosis(vals, fisher=False)), bimodality_coefficient(vals))
+    return (
+        float(skew(vals)),
+        float(kurtosis(vals, fisher=False)),
+        bimodality_coefficient(vals),
+    )
 
 
 # -------------------------
 # Package API
 # -------------------------
+
 
 def add_moments(
     table_tsv: str,
@@ -103,7 +110,9 @@ def add_moments(
         raise ValueError(f"Table must contain columns {needed}")
 
     if base.duplicated(["chr", "start", "end"]).any():
-        raise ValueError("Table has duplicate (chr,start,end) rows; cannot merge safely.")
+        raise ValueError(
+            "Table has duplicate (chr,start,end) rows; cannot merge safely."
+        )
 
     # create columns in a deterministic order
     out = base.copy()
@@ -152,6 +161,7 @@ def add_moments(
 # Standalone script CLI
 # -------------------------
 
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="Compute skewness, kurtosis, and bimodality per peak across BigWig files.",
@@ -159,10 +169,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # Standalone peaks mode
-    p.add_argument("--peaks", help="Peaks BED/TSV (headerless). Must have >=3 columns: chr, start, end.")
+    p.add_argument(
+        "--peaks",
+        help="Peaks BED/TSV (headerless). Must have >=3 columns: chr, start, end.",
+    )
 
     # Table mode
-    p.add_argument("--table", help="Existing feature table TSV (must have chr/start/end).")
+    p.add_argument(
+        "--table", help="Existing feature table TSV (must have chr/start/end)."
+    )
 
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--bigwig-dir", help="Directory containing *.bw BigWig files.")
@@ -216,6 +231,7 @@ class tempfile_named_tsv:
 
     def __enter__(self) -> str:
         import tempfile
+
         fd, path = tempfile.mkstemp(suffix=".tsv")
         os.close(fd)
         self.df.to_csv(path, sep="\t", index=False)

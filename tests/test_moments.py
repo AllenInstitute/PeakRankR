@@ -6,7 +6,6 @@ These test the pure-Python computation routines (no BigWig files needed).
 """
 
 import numpy as np
-import pytest
 
 from pypeakranker.moments import (
     bimodality_coefficient,

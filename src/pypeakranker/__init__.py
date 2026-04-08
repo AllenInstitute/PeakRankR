@@ -6,6 +6,7 @@ from .moments import add_moments
 from .rank import rank_by_specificity
 
 __all__ = [
+    "__version__",
     "init_table",
     "add_signal",
     "add_gc",

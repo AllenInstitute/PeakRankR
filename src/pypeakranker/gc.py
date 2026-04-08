@@ -15,7 +15,6 @@ python -m pypeakranker.gc --peaks ... --reference-fasta ... --output ...
 from __future__ import annotations
 
 import argparse
-import os
 
 import pandas as pd
 from pyfaidx import Fasta
@@ -34,6 +33,7 @@ def gc_fraction(seq: str) -> float:
 # Package API
 # -------------------------
 
+
 def add_gc(
     table_tsv: str,
     reference_fasta: str,
@@ -51,7 +51,9 @@ def add_gc(
         raise ValueError(f"Table must contain columns {needed}")
 
     if base.duplicated(["chr", "start", "end"]).any():
-        raise ValueError("Table has duplicate (chr,start,end) rows; cannot merge safely.")
+        raise ValueError(
+            "Table has duplicate (chr,start,end) rows; cannot merge safely."
+        )
 
     log(f"Loading FASTA: {reference_fasta}", quiet)
     fasta = Fasta(reference_fasta)
@@ -92,6 +94,7 @@ def add_gc(
 # Standalone script CLI
 # -------------------------
 
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="Compute GC fraction per peak from a reference genome FASTA.",
@@ -99,10 +102,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # Backward-compatible standalone mode (peaks -> gc table)
-    p.add_argument("--peaks", help="Peaks BED/TSV (headerless). Must have >=3 columns: chr, start, end.")
+    p.add_argument(
+        "--peaks",
+        help="Peaks BED/TSV (headerless). Must have >=3 columns: chr, start, end.",
+    )
 
     # Option B mode (table -> table)
-    p.add_argument("--table", help="Existing feature table TSV (must have chr/start/end).")
+    p.add_argument(
+        "--table", help="Existing feature table TSV (must have chr/start/end)."
+    )
 
     p.add_argument("--reference-fasta", required=True, help="Reference genome FASTA.")
     p.add_argument("--output", required=True, help="Output TSV path.")
@@ -141,7 +149,10 @@ def main() -> None:
                 gc_vals.append(pd.NA)
 
         if missing and not args.quiet:
-            log(f"Warning: {missing} peaks had chromosomes not found in FASTA.", args.quiet)
+            log(
+                f"Warning: {missing} peaks had chromosomes not found in FASTA.",
+                args.quiet,
+            )
 
         out_df = peaks_df.copy()
         out_df["GC_content"] = gc_vals
