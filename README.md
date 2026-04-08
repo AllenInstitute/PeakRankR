@@ -109,10 +109,11 @@ pypeakranker add-phylop \
   --out features.tsv
 ```
 
-<details>
-<summary>Python API and additional options</summary>
+**Python:**
 
 ```python
+from pypeakranker import add_phylop
+
 add_phylop(
     table_tsv="features.tsv",
     phylop_bw="hg38.phyloP100way.bw",
@@ -125,15 +126,13 @@ add_phylop(
 ```
 
 Peaks that fail to lift over receive a score of `0`. Pass
-`--allow-missing-chroms` (CLI) or `allow_missing_chroms=True` (API) to
+`--allow-missing-chroms` (CLI) or `allow_missing_chroms=True` (Python) to
 suppress errors for chromosomes absent from the PhyloP track.
 
 **Requirements:** UCSC [`liftOver`](https://hgdownload.soe.ucsc.edu/admin/exe/)
 binary on your `PATH` and a
 [chain file](https://hgdownload.soe.ucsc.edu/goldenPath/rheMac10/liftOver/)
-for your source → target assembly pair.
-
-</details>
+for your source to target assembly pair.
 
 ## Tests
 
