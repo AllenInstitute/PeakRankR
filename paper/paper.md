@@ -43,8 +43,8 @@ reproducibility and cross-study comparability.
 
 **PyPeakRankR** is a Python package that standardizes quantitative feature
 extraction for predefined genomic peaks. It produces a reproducible peak × feature
-matrix — covering BigWig signal summaries, GC content, PhyloP conservation scores,
-distribution moments, and ATAC specificity rankings — that can be used for
+matrix, covering BigWig signal summaries, GC content, PhyloP conservation scores,
+distribution moments, and ATAC specificity rankings, that can be used for
 downstream statistical analysis, ranking, or machine learning applications. By
 separating deterministic feature generation from user defined ranking logic,
 PyPeakRankR promotes transparency, modularity, and reproducibility. It runs
@@ -67,7 +67,7 @@ particularly for enhancer discovery or adeno-associated virus (AAV) tool design.
 Existing genomics tools each address part of the problem but none assembles
 a unified, portable feature matrix. Peak callers such as MACS2 [@Zhang2008]
 identify open chromatin regions but rank peaks only by fold change or p-value,
-reflecting signal strength rather than cell-type specificity — a peak with
+reflecting signal strength rather than cell-type specificity. A peak with
 high fold change may be active across many cell types and therefore a poor
 candidate for cell-type targeted AAV tools. Differential accessibility tools
 such as ArchR [@Granja2021] test for cell-type enrichment but operate within
@@ -128,8 +128,8 @@ the BICCN challenge [@Johansen2025].
 Each feature has a distinct biological rationale. GC content is lower in active
 enhancers than in promoters or bulk genomic DNA, reflecting differences in
 nucleosome occupancy. PhyloP conservation [@Pollard2010] identifies peaks under
-cross-species purifying selection. Signal distribution moments — kurtosis
-(sharpness), skewness (asymmetry), and bimodality (Sarle's coefficient) — are
+cross-species purifying selection. Signal distribution moments, including kurtosis
+(sharpness), skewness (asymmetry), and bimodality (Sarle's coefficient), are
 motivated by Lu et al. [@Lu2015], who showed these shape features distinguish
 enhancers from promoters in ChIP-seq data more reliably than signal intensity
 alone. The table-first design is directly extensible: future columns could

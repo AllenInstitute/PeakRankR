@@ -144,10 +144,10 @@ pytest tests/
 
 ## Used in
 
-- **Johansen et al. (2025)** — [Evaluating methods for the prediction of cell-type-specific enhancers in the mammalian cortex](https://doi.org/10.1016/j.xgen.2025.100879). *Cell Genomics.*
+- **Johansen et al. (2025)**: [Evaluating methods for the prediction of cell-type-specific enhancers in the mammalian cortex](https://doi.org/10.1016/j.xgen.2025.100879). *Cell Genomics.*
   PeakRankR ranked among the top 3 of 16 methods in the BICCN community challenge.
 
-- **Wirthlin et al. (2026)** — [A Cross-Species Enhancer-AAV Toolkit for Cell Type-Specific Targeting Across the Basal Ganglia](https://doi.org/10.64898/2026.02.23.706695). *bioRxiv.*
+- **Wirthlin et al. (2026)**: [A Cross-Species Enhancer-AAV Toolkit for Cell Type-Specific Targeting Across the Basal Ganglia](https://doi.org/10.64898/2026.02.23.706695). *bioRxiv.*
   Used in the CERP pipeline for 514 candidate enhancers across basal ganglia cell types in mouse and macaque.
 
 ## Citation
@@ -160,8 +160,8 @@ pytest tests/
 ## Authors
 
 Saroja Somasundaram, Nelson J. Johansen, Trygve E. Bakken, Jeremy A. Miller
-— Allen Institute for Brain Science
+, Allen Institute for Brain Science
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
