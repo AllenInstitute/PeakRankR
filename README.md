@@ -6,6 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://github.com/AllenInstitute/PeakRankR/actions/workflows/tests.yml/badge.svg?branch=python-package)](https://github.com/AllenInstitute/PeakRankR/actions/workflows/tests.yml)
 
 **PyPeakRankR** is a Python package for extracting quantitative features from
 a predefined set of genomic peaks and assembling them into a reproducible,
@@ -119,6 +120,24 @@ rank_by_specificity(
     out_tsv="ranked.tsv"
 )
 ```
+
+---
+
+## API Reference
+
+All functions follow the same pattern: read an existing TSV, append columns, write out.
+
+| Function | Parameters | Appended columns |
+|---|---|---|
+| `init_table(peaks_path, out_tsv)` | BED file path, output TSV | `chr`, `start`, `end` |
+| `add_signal(table_tsv, bigwig_files, out_tsv, stat=)` | `stat`: `"sum"` / `"mean"` / `"max"` | `<sample>_summary` per BigWig |
+| `add_gc(table_tsv, reference_fasta, out_tsv)` | Reference genome FASTA | `GC_content` |
+| `add_phylop(table_tsv, phylop_bw, out_tsv, chain_file=)` | PhyloP BigWig, optional chain file | `phyloP_mean` |
+| `add_moments(table_tsv, bigwig_files, out_tsv)` | BigWig file list | `<sample>_skewness`, `_kurtosis`, `_bimodality` |
+| `rank_by_specificity(table_tsv, target_cols, background_cols, out_tsv)` | Target & background column names | `specificity_score`, `specificity_rank` |
+
+All functions accept `quiet=True` to suppress progress messages and
+`allow_missing_chroms=True` (where applicable) to handle missing chromosomes gracefully.
 
 ---
 

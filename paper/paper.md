@@ -79,6 +79,22 @@ provides low-level BigWig access without peak-level aggregation, `deepTools`
 `pyfaidx` [@Shirley2015] enables FASTA access without a genomics feature
 pipeline.
 
+Table 1 summarises feature coverage across these tools.
+
+| Tool | Peak-level signal | Cell-type specificity | GC content | PhyloP conservation | Signal moments | Portable TSV output | CLI + Python API | Cross-assembly (liftOver) |
+|------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| PyPeakRankR | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| ArchR | ✓ | ✓ | – | – | – | partial | – | – |
+| MACS2 | ✓ | – | – | – | – | ✓ | ✓ | – |
+| deepTools | ✓ | partial | – | – | – | ✓ | ✓ | – |
+| GREAT | – | – | – | – | – | ✓ | web only | – |
+| pyBigWig | low-level | – | – | – | – | – | ✓ | – |
+| pyfaidx | – | – | via FASTA | – | – | – | ✓ | – |
+
+: Feature coverage across genomics tools. ✓ = supported natively;
+partial = limited or indirect support; – = not supported. ArchR portable
+output is partial because outputs are tied to the ArchR project object. {#tbl:tools}
+
 PyPeakRankR fills this gap by combining `pyBigWig`, `pyfaidx`, and
 `scipy` [@Virtanen2020] into a flexible CLI pipeline that assembles
 heterogeneous features into a single reproducible TSV table.
@@ -169,18 +185,6 @@ signal is nearly exclusive to L5 ET neurons; PyPeakRankR rescues it
 (Spec=0.61). In vivo validation from adeno-associated virus (AAV)
 screening in mouse motor cortex [@Johansen2025].](biccn_three_peaks.png)
 
-| Enhancer | ArchR rank | PyPeakRankR Spec | ATAC pattern | In vivo result |
-|----------|-----------|-----------------|--------------|----------------|
-| AiE0456m |  1 | 0.92 | High, L5 ET-specific       | On-target (strong) |
-| AiE0460m |  2 | 0.18 | High, multi-cell-type      | Weak / non-specific |
-| AiE0463m | 18 | 0.61 | Low total, L5 ET-concentrated | On-target (specific) |
-
-: Three L5 ET cortical enhancers from the BICCN Community Challenge
-[@Johansen2025]. ArchR rank is based on differential accessibility
-(log2FC). PyPeakRankR specificity (Spec) is the normalised ratio of
-target-group signal to mean background signal, computed using
-`pypeakranker rank-specificity`. AiE0460m and AiE0463m represent
-opposite failure modes of signal-magnitude ranking. {#tbl:peaks}
 
 
 # Research impact statement
