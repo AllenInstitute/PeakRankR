@@ -153,9 +153,8 @@ cell types. Figure 2 illustrates the approach using three validated L5
 extratelencephalic (ET) enhancers from that challenge.
 
 The specificity metric correctly distinguishes peaks whose signal is
-concentrated in the target cell type (AiE0456m, Spec = 0.92; AiE0463m,
-Spec = 0.61) from peaks with comparable total signal spread across
-multiple cell types (AiE0460m, Spec = 0.18). In vivo AAV screening
+concentrated in the target cell type from peaks with comparable total
+signal spread across multiple cell types. In vivo AAV screening
 confirmed that the high-specificity peaks drove on-target expression
 while the low-specificity peak did not, demonstrating that the
 specificity ratio captures biologically meaningful enrichment that
@@ -165,11 +164,10 @@ signal-magnitude ranking alone misses [@Johansen2025].
 validated L5 ET enhancers from the BICCN Community Challenge
 [@Johansen2025]. Each column shows per-cell-type read-pileup profiles;
 dashed vertical lines mark the MACS2 summit. AiE0456m and AiE0463m
-show signal concentrated in L5 ET neurons (Spec = 0.92 and 0.61,
-respectively), while AiE0460m shows comparable signal across all five
-cell types (Spec = 0.18). In vivo validation from adeno-associated
-virus (AAV) screening in mouse motor cortex confirmed on-target
-expression for the high-specificity peaks
+show signal concentrated in L5 ET neurons, while AiE0460m shows
+comparable signal across all five cell types. In vivo validation from
+adeno-associated virus (AAV) screening in mouse motor cortex confirmed
+on-target expression for the high-specificity peaks
 [@Johansen2025].](biccn_three_peaks.png)
 
 # Research impact statement
