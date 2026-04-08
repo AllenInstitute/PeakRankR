@@ -255,9 +255,9 @@ PyPeakRankR was used in the following published studies:
 
 If you use PyPeakRankR in your research, please cite:
 
-> Somasundaram, S. and Johansen, N.J. (2026). PyPeakRankR: Reproducible Peak-Level
-> Feature Extraction for Regulatory Element Ranking.
-> *Journal of Open Source Software*.
+> Somasundaram, S., Johansen, N.J., Bakken, T.E., and Miller, J.A. (2026).
+> PyPeakRankR: Reproducible Peak-Level Feature Extraction for Regulatory Element Ranking.
+> *Journal of Open Source Software* (submitted).
 > https://github.com/AllenInstitute/PeakRankR/tree/python-package
 
 ---
@@ -268,9 +268,9 @@ Saroja Somasundaram — Allen Institute for Brain Science
 
 Nelson J. Johansen — Allen Institute for Brain Science
 
-Jeremy A. Miller — Allen Institute for Brain Science
-
 Trygve E. Bakken — Allen Institute for Brain Science
+
+Jeremy A. Miller — Allen Institute for Brain Science
 
 ## License
 

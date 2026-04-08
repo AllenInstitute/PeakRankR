@@ -12,15 +12,15 @@ authors:
   - name: Saroja Somasundaram
     orcid: 0000-0002-3729-9849
     affiliation: 1
+    corresponding: true
   - name: Nelson J. Johansen
     orcid: 0000-0002-4436-969X
     affiliation: 1
-  - name: Jeremy A. Miller
-    orcid: 0000-0003-4549-3747
-    affiliation: 1
-    corresponding: true
   - name: Trygve E. Bakken
     orcid: 0000-0003-1110-6431
+    affiliation: 1
+  - name: Jeremy A. Miller
+    orcid: 0000-0003-4549-3747
     affiliation: 1
     corresponding: true
 affiliations:
@@ -142,33 +142,6 @@ reproducible matrix.
 PhyloP conservation, ATAC specificity, and signal distribution moments
 (kurtosis, skewness, bimodality). Figure adapted from Wirthlin et al.
 (2026) [@Wirthlin2026].](figure6_panelA.png){ width=100% }
-
-# Benchmarking against the BICCN challenge
-
-PyPeakRankR's specificity-ratio approach was validated in the Brain
-Initiative Cell Census Network (BICCN) Community Challenge
-[@Johansen2025], where PeakRankR ranked third among 16 methods for
-predicting functional cell-type-specific enhancers across 19 cortical
-cell types. Figure 2 illustrates the approach using three validated L5
-extratelencephalic (ET) enhancers from that challenge.
-
-The specificity metric correctly distinguishes peaks whose signal is
-concentrated in the target cell type from peaks with comparable total
-signal spread across multiple cell types. In vivo AAV screening
-confirmed that the high-specificity peaks drove on-target expression
-while the low-specificity peak did not, demonstrating that the
-specificity ratio captures biologically meaningful enrichment that
-signal-magnitude ranking alone misses [@Johansen2025].
-
-![ATAC-seq signal tracks across five cortical cell types for three
-validated L5 ET enhancers from the BICCN Community Challenge
-[@Johansen2025]. Each column shows per-cell-type read-pileup profiles;
-dashed vertical lines mark the MACS2 summit. AiE0456m and AiE0463m
-show signal concentrated in L5 ET neurons, while AiE0460m shows
-comparable signal across all five cell types. In vivo validation from
-adeno-associated virus (AAV) screening in mouse motor cortex confirmed
-on-target expression for the high-specificity peaks
-[@Johansen2025].](biccn_three_peaks.png)
 
 # Research impact statement
 
